@@ -10,16 +10,16 @@ include {
 
 def helpMessage() {
     log.info """
-    nf-core style learning pipeline: var_call
+    Variant calling with Freebayes
 
     Usage:
-      nextflow run main.nf --analysis_mode paired --input samplesheet.csv --genome genome.fa --outdir results --species my_species --dataset_id my_run
+      nextflow run var_call --analysis_mode paired --input samplesheet.csv --genome genome.fa --outdir results --species my_species --dataset_id my_run
 
     Cluster example (Conda):
-      nextflow run main.nf -profile conda,lsf -params-file params/afusca_params.json -work-dir data/workdir/var_call -resume
+      nextflow run var_call -profile conda,lsf -params-file params/afusca_params.json -work-dir data/workdir/var_call -resume
 
     Cluster example (Apptainer): IN PROGRESS
-      nextflow run main.nf -profile apptainer,lsf -params-file params/afusca_params.json --apptainer_container /path/to/var_call.sif -work-dir data/workdir/var_call -resume
+      nextflow run var_call -profile apptainer,lsf -params-file params/afusca_params.json --apptainer_container /path/to/var_call.sif -work-dir data/workdir/var_call -resume
 
     Required parameters:
       --analysis_mode         One of: paired, single_end, bams

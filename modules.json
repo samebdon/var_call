@@ -1,0 +1,7 @@
+{
+  "name": "var_call",
+  "description": "Placeholder module manifest for a learning-oriented nf-core style cleanup.",
+  "local_modules": [
+    "modules/local/var_call.nf"
+  ]
+}

@@ -1,0 +1,8 @@
+{
+	"genome" : "${launchDir}/data/genomes/GCA_947179485.1_qeAllFusc8.1_genomic.simple_header.earlgrey_masked.fna",
+	"genome_index" : "${launchDir}/data/genomes/GCA_947179485.1_qeAllFusc8.1_genomic.simple_header.earlgrey_masked.fna.fai",
+	"reads" : "${launchDir}/data/raw_data/reseq/raw_reads/*/*.{1,2}.fq.gz",
+	"repeat_bed" : "${launchDir}/data/genomes/afusca_repeats/allacmaFusca.filteredRepeats.bed",
+	"outdir" : "${launchDir}/data/results/var_call/allacma_fusca_lowmax/",
+	"species" : "allacma_fusca"
+}

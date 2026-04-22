@@ -1,0 +1,83 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "title": "var_call parameters",
+  "type": "object",
+  "definitions": {
+    "input_output_options": {
+      "title": "Input/output options",
+      "type": "object",
+      "properties": {
+        "analysis_mode": {
+          "type": "string",
+          "enum": ["paired", "single_paired", "single_end", "bams"],
+          "description": "Pipeline entry mode."
+        },
+        "input": {
+          "type": "string",
+          "description": "CSV samplesheet for FASTQ-based runs."
+        },
+        "reads": {
+          "type": "string",
+          "description": "Legacy glob path to FASTQ input files."
+        },
+        "bams": {
+          "type": "string",
+          "description": "Glob path to BAM input files."
+        },
+        "genome": {
+          "type": "string",
+          "description": "Reference genome FASTA."
+        },
+        "genome_index": {
+          "type": "string",
+          "description": "Reference genome FASTA index."
+        },
+        "repeat_bed": {
+          "type": "string",
+          "description": "Optional BED file of repeat regions to subtract from callable regions."
+        },
+        "species": {
+          "type": "string",
+          "description": "Dataset-wide species label."
+        },
+        "dataset_id": {
+          "type": "string",
+          "description": "Optional dataset/run label used for merged output filenames. Falls back to species."
+        },
+        "outdir": {
+          "type": "string",
+          "description": "Directory where result files will be published."
+        }
+      }
+    },
+    "workflow_options": {
+      "title": "Workflow options",
+      "type": "object",
+      "properties": {
+        "min_depth": {
+          "type": "integer",
+          "default": 8,
+          "description": "Minimum callable depth passed to mosdepth."
+        },
+        "skip_trimming": {
+          "type": "boolean",
+          "default": false,
+          "description": "Skip fastp for paired-read workflows."
+        },
+        "publish_dir_mode": {
+          "type": "string",
+          "default": "copy",
+          "description": "Nextflow publishDir mode."
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "$ref": "#/definitions/input_output_options"
+    },
+    {
+      "$ref": "#/definitions/workflow_options"
+    }
+  ]
+}

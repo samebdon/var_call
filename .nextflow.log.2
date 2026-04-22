@@ -1,0 +1,61 @@
+Apr-20 14:57:47.895 [main] DEBUG nextflow.cli.Launcher - $> nextflow run main.nf --help
+Apr-20 14:57:47.954 [main] INFO  nextflow.cli.CmdRun - N E X T F L O W  ~  version 22.10.7
+Apr-20 14:57:47.965 [main] DEBUG nextflow.plugin.PluginsFacade - Setting up plugin manager > mode=prod; embedded=false; plugins-dir=/Users/se13/.nextflow/plugins; core-plugins: nf-amazon@1.11.4,nf-azure@0.14.2,nf-codecommit@0.1.2,nf-console@1.0.4,nf-ga4gh@1.0.4,nf-google@1.4.5,nf-tower@1.5.6,nf-wave@0.5.4
+Apr-20 14:57:47.971 [main] INFO  org.pf4j.DefaultPluginStatusProvider - Enabled plugins: []
+Apr-20 14:57:47.972 [main] INFO  org.pf4j.DefaultPluginStatusProvider - Disabled plugins: []
+Apr-20 14:57:47.974 [main] INFO  org.pf4j.DefaultPluginManager - PF4J version 3.4.1 in 'deployment' mode
+Apr-20 14:57:47.979 [main] INFO  org.pf4j.AbstractPluginManager - No plugins
+Apr-20 14:57:47.993 [main] DEBUG nextflow.config.ConfigBuilder - Found config local: /Users/se13/Documents/Codex/2026-04-20-files-mentioned-by-the-user-var/var_call/nextflow.config
+Apr-20 14:57:47.993 [main] DEBUG nextflow.config.ConfigBuilder - Parsing config file: /Users/se13/Documents/Codex/2026-04-20-files-mentioned-by-the-user-var/var_call/nextflow.config
+Apr-20 14:57:48.007 [main] DEBUG nextflow.config.ConfigBuilder - Applying config profile: `standard`
+Apr-20 14:57:48.411 [main] DEBUG nextflow.cli.CmdRun - Applied DSL=2 from script declararion
+Apr-20 14:57:48.421 [main] INFO  nextflow.cli.CmdRun - Launching `main.nf` [hopeful_snyder] DSL2 - revision: 51a42d438e
+Apr-20 14:57:48.421 [main] DEBUG nextflow.plugin.PluginsFacade - Plugins default=[]
+Apr-20 14:57:48.422 [main] DEBUG nextflow.plugin.PluginsFacade - Plugins resolved requirement=[]
+Apr-20 14:57:48.427 [main] DEBUG nextflow.secret.LocalSecretsProvider - Secrets store: /Users/se13/.nextflow/secrets/store.json
+Apr-20 14:57:48.429 [main] DEBUG nextflow.secret.SecretsLoader - Discovered secrets providers: [nextflow.secret.LocalSecretsProvider@27e7c77f] - activable => nextflow.secret.LocalSecretsProvider@27e7c77f
+Apr-20 14:57:48.460 [main] DEBUG nextflow.Session - Session UUID: fca2177c-8747-40be-aa94-e3b79fa41101
+Apr-20 14:57:48.460 [main] DEBUG nextflow.Session - Run name: hopeful_snyder
+Apr-20 14:57:48.461 [main] DEBUG nextflow.Session - Executor pool size: 8
+Apr-20 14:57:48.466 [main] DEBUG nextflow.util.ThreadPoolBuilder - Creating thread pool 'FileTransfer' minSize=10; maxSize=24; workQueue=LinkedBlockingQueue[10000]; allowCoreThreadTimeout=false
+Apr-20 14:57:48.479 [main] DEBUG nextflow.cli.CmdInfo - Unable to fetch totalSwapSpaceSize - errno: 1 error: sysctlbyname failed
+
+Apr-20 14:57:48.479 [main] DEBUG nextflow.cli.CmdInfo - Unable to fetch freeSwapSpaceSize - errno: 1 error: sysctlbyname failed
+
+Apr-20 14:57:48.479 [main] DEBUG nextflow.cli.CmdRun - 
+  Version: 22.10.7 build 5853
+  Created: 18-02-2023 20:32 UTC (20:32 BST)
+  System: Mac OS X 26.4
+  Runtime: Groovy 3.0.13 on Java HotSpot(TM) 64-Bit Server VM 17.0.6+9-LTS-190
+  Encoding: UTF-8 (UTF-8)
+  Process: 81302@mib117530s [172.20.242.99]
+  CPUs: 8 - Mem: 16 GB (107 MB) - Swap: - (-)
+Apr-20 14:57:48.486 [main] DEBUG nextflow.Session - Work-dir: /Users/se13/Documents/Codex/2026-04-20-files-mentioned-by-the-user-var/var_call/work [Mac OS X]
+Apr-20 14:57:48.496 [main] DEBUG nextflow.executor.ExecutorFactory - Extension executors providers=[]
+Apr-20 14:57:48.500 [main] DEBUG nextflow.Session - Observer factory: DefaultObserverFactory
+Apr-20 14:57:48.523 [main] DEBUG nextflow.cache.CacheFactory - Using Nextflow cache factory: nextflow.cache.DefaultCacheFactory
+Apr-20 14:57:48.529 [main] DEBUG nextflow.util.CustomThreadPool - Creating default thread pool > poolSize: 9; maxThreads: 1000
+Apr-20 14:57:48.563 [main] DEBUG nextflow.Session - Session start
+Apr-20 14:57:48.565 [main] DEBUG nextflow.trace.TraceFileObserver - Workflow started -- trace file: /Users/se13/Documents/Codex/2026-04-20-files-mentioned-by-the-user-var/var_call/results/pipeline_info/execution_trace.txt
+Apr-20 14:57:48.705 [main] DEBUG nextflow.script.ScriptRunner - > Launching execution
+Apr-20 14:57:49.202 [main] INFO  nextflow.Nextflow - 
+nf-core style learning pipeline: var_call
+
+Usage:
+  nextflow run main.nf --analysis_mode paired --reads 'data/*_{1,2}.fastq.gz' --genome genome.fa --genome_index genome.fa.fai --outdir results --species my_species
+
+Required parameters:
+  --analysis_mode         One of: paired, single_paired, single_end, bams
+  --genome                Reference genome FASTA
+  --genome_index          FASTA index (.fai)
+  --repeat_bed            BED of repeat regions to exclude
+  --outdir                Output directory
+  --species               Sample group/species label used in merged outputs
+
+Mode-specific parameters:
+  --reads                 Input FASTQ glob for paired / single_paired / single_end
+  --bams                  Input BAM glob for bams mode
+Useful flags:
+  --skip_trimming         Skip fastp in paired-read modes
+  --help                  Show this help message
+

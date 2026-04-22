@@ -1,6 +1,5 @@
 {
 	"genome" : "${launchDir}/data/results/annotations/sminthurus_viridis/earlgrey/sminthurus_viridis_draft_summaryFiles/sminthurus_viridis_draft.softmasked.fasta",
-	"genome_index" : "${launchDir}/data/results/annotations/sminthurus_viridis/earlgrey/sminthurus_viridis_draft_summaryFiles/sminthurus_viridis_draft.softmasked.fasta.fai",
 	"reads" : "${launchDir}/data/raw_data/svir/other.fastq.gz",
 	"repeat_bed" : "${launchDir}/data/results/annotations/sminthurus_viridis/earlgrey/sminthurus_viridis_draft_summaryFiles/sminthurus_viridis_draft.filteredRepeats.bed",
 	"outdir" : "${launchDir}/data/results/var_call/sminthurus_viridis/",

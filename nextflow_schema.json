@@ -26,11 +26,7 @@
         },
         "genome": {
           "type": "string",
-          "description": "Reference genome FASTA."
-        },
-        "genome_index": {
-          "type": "string",
-          "description": "Reference genome FASTA index."
+          "description": "Reference genome FASTA. The pipeline will generate the matching .fai file internally."
         },
         "repeat_bed": {
           "type": "string",

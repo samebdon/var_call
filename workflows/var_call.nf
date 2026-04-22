@@ -1,51 +1,20 @@
-include {
-    TRIM_READS
-    BWA_INDEX
-    BWA_MEM
-    BWA_MEM_SE
-    ADD_RGS
-    SORT_BAM_SAMBAMBA
-    MARK_DUPES_SAMBAMBA
-    INDEX_BAM_SAMBAMBA
-    MOSDEPTH_CALLABLE
-    INTERSECT_BEDS
-    INTERSECT_BEDS_NO_REPEATS
-    INTERSECT_BED
-    INTERSECT_BED_NO_REPEATS
-    SAMBAMBA_MERGE
-    FREEBAYES
-    BCFTOOLS_FILTER
-    GENERATE_FAIL_BED
-    GENERATE_PASS_VCF
-    BEDTOOLS_SUBTRACT
-    BCFTOOLS_SORT
-    BCFTOOLS_INDEX
-} from '../modules/local/var_call'
+include { PREPARE_REFERENCE } from './prepare_reference'
+include { CALLABLE_REGIONS_MULTI; CALLABLE_REGIONS_SINGLE } from './callable_regions'
+include { FILTER_VARIANTS } from './filter_variants'
 
-def selectMultiSampleCallableBeds(mosdepth_beds, repeat_bed, genome_index, species) {
-    if (repeat_bed) {
-        INTERSECT_BEDS(mosdepth_beds, repeat_bed, genome_index, species)
-        return INTERSECT_BEDS.out.freebayes
-    }
-
-    INTERSECT_BEDS_NO_REPEATS(mosdepth_beds, genome_index, species)
-    return INTERSECT_BEDS_NO_REPEATS.out.freebayes
-}
-
-def selectSingleSampleCallableBed(mosdepth_bed, repeat_bed, genome_index, species) {
-    if (repeat_bed) {
-        INTERSECT_BED(mosdepth_bed, repeat_bed, genome_index, species)
-        return INTERSECT_BED.out
-    }
-
-    INTERSECT_BED_NO_REPEATS(mosdepth_bed, genome_index, species)
-    return INTERSECT_BED_NO_REPEATS.out
-}
+include { TRIM_READS } from '../modules/local/trim_reads'
+include { BWA_MEM } from '../modules/local/bwa_mem'
+include { BWA_MEM_SE } from '../modules/local/bwa_mem_se'
+include { ADD_RGS } from '../modules/local/add_rgs'
+include { SORT_BAM_SAMBAMBA } from '../modules/local/sort_bam_sambamba'
+include { MARK_DUPES_SAMBAMBA } from '../modules/local/mark_dupes_sambamba'
+include { INDEX_BAM_SAMBAMBA } from '../modules/local/index_bam_sambamba'
+include { SAMBAMBA_MERGE } from '../modules/local/sambamba_merge'
+include { FREEBAYES } from '../modules/local/freebayes'
 
 workflow VAR_CALL_PAIRED {
     take:
     genome
-    genome_index
     read_files
     repeat_bed
     species
@@ -53,39 +22,36 @@ workflow VAR_CALL_PAIRED {
     skip_trimming
 
     main:
-    BWA_INDEX(genome)
+    PREPARE_REFERENCE(genome)
+
     if (skip_trimming) {
         trimmed_reads = read_files
     } else {
         TRIM_READS(read_files)
         trimmed_reads = TRIM_READS.out
     }
-    BWA_MEM(genome, BWA_INDEX.out, trimmed_reads)
+
+    BWA_MEM(genome, PREPARE_REFERENCE.out.bwa_index, trimmed_reads)
     SORT_BAM_SAMBAMBA(BWA_MEM.out)
     MARK_DUPES_SAMBAMBA(SORT_BAM_SAMBAMBA.out)
     INDEX_BAM_SAMBAMBA(MARK_DUPES_SAMBAMBA.out.meta_bam)
-    MOSDEPTH_CALLABLE(MARK_DUPES_SAMBAMBA.out.meta_bam.join(INDEX_BAM_SAMBAMBA.out), params.min_depth)
-    callable_bed = selectMultiSampleCallableBeds(MOSDEPTH_CALLABLE.out.collect(), repeat_bed, genome_index, dataset_id)
+    CALLABLE_REGIONS_MULTI(MARK_DUPES_SAMBAMBA.out.meta_bam.join(INDEX_BAM_SAMBAMBA.out), params.min_depth, repeat_bed, PREPARE_REFERENCE.out.fasta_index, dataset_id)
     SAMBAMBA_MERGE(MARK_DUPES_SAMBAMBA.out.bam_only.collect(), dataset_id)
-    FREEBAYES(genome, genome_index, SAMBAMBA_MERGE.out, callable_bed)
-    BCFTOOLS_FILTER(genome, FREEBAYES.out)
-    GENERATE_FAIL_BED(BCFTOOLS_FILTER.out, genome_index)
-    GENERATE_PASS_VCF(BCFTOOLS_FILTER.out)
-    BEDTOOLS_SUBTRACT(callable_bed, GENERATE_FAIL_BED.out, genome_index)
-    BCFTOOLS_SORT(GENERATE_PASS_VCF.out)
-    BCFTOOLS_INDEX(BCFTOOLS_SORT.out)
+    FREEBAYES(genome, PREPARE_REFERENCE.out.fasta_index, SAMBAMBA_MERGE.out, CALLABLE_REGIONS_MULTI.out.callable_bed)
+    FILTER_VARIANTS(genome, FREEBAYES.out, CALLABLE_REGIONS_MULTI.out.callable_bed, PREPARE_REFERENCE.out.fasta_index)
 }
 
 workflow VAR_CALL_BAMS {
     take:
     genome
-    genome_index
     bams
     repeat_bed
     species
     dataset_id
 
     main:
+    PREPARE_REFERENCE(genome)
+
     bams
         .map { bam ->
             def prefix = bam.baseName.tokenize('.')[0]
@@ -97,22 +63,15 @@ workflow VAR_CALL_BAMS {
     SORT_BAM_SAMBAMBA(ADD_RGS.out)
     MARK_DUPES_SAMBAMBA(SORT_BAM_SAMBAMBA.out)
     INDEX_BAM_SAMBAMBA(MARK_DUPES_SAMBAMBA.out.meta_bam)
-    MOSDEPTH_CALLABLE(MARK_DUPES_SAMBAMBA.out.meta_bam.join(INDEX_BAM_SAMBAMBA.out), params.min_depth)
-    callable_bed = selectMultiSampleCallableBeds(MOSDEPTH_CALLABLE.out.collect(), repeat_bed, genome_index, dataset_id)
+    CALLABLE_REGIONS_MULTI(MARK_DUPES_SAMBAMBA.out.meta_bam.join(INDEX_BAM_SAMBAMBA.out), params.min_depth, repeat_bed, PREPARE_REFERENCE.out.fasta_index, dataset_id)
     SAMBAMBA_MERGE(MARK_DUPES_SAMBAMBA.out.bam_only.collect(), dataset_id)
-    FREEBAYES(genome, genome_index, SAMBAMBA_MERGE.out, callable_bed)
-    BCFTOOLS_FILTER(genome, FREEBAYES.out)
-    GENERATE_FAIL_BED(BCFTOOLS_FILTER.out, genome_index)
-    GENERATE_PASS_VCF(BCFTOOLS_FILTER.out)
-    BEDTOOLS_SUBTRACT(callable_bed, GENERATE_FAIL_BED.out, genome_index)
-    BCFTOOLS_SORT(GENERATE_PASS_VCF.out)
-    BCFTOOLS_INDEX(BCFTOOLS_SORT.out)
+    FREEBAYES(genome, PREPARE_REFERENCE.out.fasta_index, SAMBAMBA_MERGE.out, CALLABLE_REGIONS_MULTI.out.callable_bed)
+    FILTER_VARIANTS(genome, FREEBAYES.out, CALLABLE_REGIONS_MULTI.out.callable_bed, PREPARE_REFERENCE.out.fasta_index)
 }
 
 workflow VAR_CALL_SINGLE_PAIRED {
     take:
     genome
-    genome_index
     read_files
     repeat_bed
     species
@@ -120,50 +79,42 @@ workflow VAR_CALL_SINGLE_PAIRED {
     skip_trimming
 
     main:
-    BWA_INDEX(genome)
+    PREPARE_REFERENCE(genome)
+
     if (skip_trimming) {
         trimmed_reads = read_files
     } else {
         TRIM_READS(read_files)
         trimmed_reads = TRIM_READS.out
     }
-    BWA_MEM(genome, BWA_INDEX.out, trimmed_reads)
+
+    BWA_MEM(genome, PREPARE_REFERENCE.out.bwa_index, trimmed_reads)
     SORT_BAM_SAMBAMBA(BWA_MEM.out)
     MARK_DUPES_SAMBAMBA(SORT_BAM_SAMBAMBA.out)
     INDEX_BAM_SAMBAMBA(MARK_DUPES_SAMBAMBA.out.meta_bam)
-    MOSDEPTH_CALLABLE(MARK_DUPES_SAMBAMBA.out.meta_bam.join(INDEX_BAM_SAMBAMBA.out), params.min_depth)
-    callable_bed = selectSingleSampleCallableBed(MOSDEPTH_CALLABLE.out, repeat_bed, genome_index, dataset_id)
-    FREEBAYES(genome, genome_index, MARK_DUPES_SAMBAMBA.out.meta_bam.join(INDEX_BAM_SAMBAMBA.out), callable_bed)
-    BCFTOOLS_FILTER(genome, FREEBAYES.out)
-    GENERATE_FAIL_BED(BCFTOOLS_FILTER.out, genome_index)
-    GENERATE_PASS_VCF(BCFTOOLS_FILTER.out)
-    BEDTOOLS_SUBTRACT(callable_bed, GENERATE_FAIL_BED.out, genome_index)
-    BCFTOOLS_SORT(GENERATE_PASS_VCF.out)
-    BCFTOOLS_INDEX(BCFTOOLS_SORT.out)
+    aligned_bam = MARK_DUPES_SAMBAMBA.out.meta_bam.join(INDEX_BAM_SAMBAMBA.out)
+    CALLABLE_REGIONS_SINGLE(aligned_bam, params.min_depth, repeat_bed, PREPARE_REFERENCE.out.fasta_index, dataset_id)
+    FREEBAYES(genome, PREPARE_REFERENCE.out.fasta_index, aligned_bam, CALLABLE_REGIONS_SINGLE.out.callable_bed)
+    FILTER_VARIANTS(genome, FREEBAYES.out, CALLABLE_REGIONS_SINGLE.out.callable_bed, PREPARE_REFERENCE.out.fasta_index)
 }
 
 workflow VAR_CALL_SINGLE_END {
     take:
     genome
-    genome_index
     reads
     repeat_bed
     species
     dataset_id
 
     main:
-    BWA_INDEX(genome)
-    BWA_MEM_SE(genome, BWA_INDEX.out, reads)
+    PREPARE_REFERENCE(genome)
+
+    BWA_MEM_SE(genome, PREPARE_REFERENCE.out.bwa_index, reads)
     SORT_BAM_SAMBAMBA(BWA_MEM_SE.out)
     MARK_DUPES_SAMBAMBA(SORT_BAM_SAMBAMBA.out)
     INDEX_BAM_SAMBAMBA(MARK_DUPES_SAMBAMBA.out.meta_bam)
-    MOSDEPTH_CALLABLE(MARK_DUPES_SAMBAMBA.out.meta_bam.join(INDEX_BAM_SAMBAMBA.out), params.min_depth)
-    callable_bed = selectSingleSampleCallableBed(MOSDEPTH_CALLABLE.out, repeat_bed, genome_index, dataset_id)
-    FREEBAYES(genome, genome_index, MARK_DUPES_SAMBAMBA.out.meta_bam.join(INDEX_BAM_SAMBAMBA.out), callable_bed)
-    BCFTOOLS_FILTER(genome, FREEBAYES.out)
-    GENERATE_FAIL_BED(BCFTOOLS_FILTER.out, genome_index)
-    GENERATE_PASS_VCF(BCFTOOLS_FILTER.out)
-    BEDTOOLS_SUBTRACT(callable_bed, GENERATE_FAIL_BED.out, genome_index)
-    BCFTOOLS_SORT(GENERATE_PASS_VCF.out)
-    BCFTOOLS_INDEX(BCFTOOLS_SORT.out)
+    aligned_bam = MARK_DUPES_SAMBAMBA.out.meta_bam.join(INDEX_BAM_SAMBAMBA.out)
+    CALLABLE_REGIONS_SINGLE(aligned_bam, params.min_depth, repeat_bed, PREPARE_REFERENCE.out.fasta_index, dataset_id)
+    FREEBAYES(genome, PREPARE_REFERENCE.out.fasta_index, aligned_bam, CALLABLE_REGIONS_SINGLE.out.callable_bed)
+    FILTER_VARIANTS(genome, FREEBAYES.out, CALLABLE_REGIONS_SINGLE.out.callable_bed, PREPARE_REFERENCE.out.fasta_index)
 }

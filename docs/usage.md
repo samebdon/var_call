@@ -3,25 +3,13 @@
 ## Minimal run
 
 ```bash
-nextflow run main.nf \
-  --analysis_mode paired \
-  --input assets/samplesheet.csv \
-  --genome ref/genome.fa \
-  --genome_index ref/genome.fa.fai \
-  --species species_name \
-  --dataset_id species_reseq_batch1 \
-  --outdir results \
-  -profile standard,conda
+nextflow run main.nf   --analysis_mode paired   --input assets/samplesheet.csv   --genome ref/genome.fa   --species species_name   --dataset_id species_reseq_batch1   --outdir results   -profile standard,conda
 ```
 
 ## Cluster run with a params file
 
 ```bash
-nextflow run main.nf \
-  -profile conda,cluster \
-  -params-file params/afusca_params.json \
-  -work-dir data/workdir/var_call \
-  -resume
+nextflow run main.nf   -profile conda,lsf   -params-file params/afusca_params.json   -work-dir data/workdir/var_call   -resume
 ```
 
 - `-params-file` is the cleanest way to keep dataset-specific settings outside the main command.
@@ -49,19 +37,18 @@ sample1,/path/sample1.fastq.gz
 You can still run with `--reads` while the pipeline is mid-refactor:
 
 ```bash
-nextflow run main.nf \
-  --analysis_mode paired \
-  --reads 'data/*_{1,2}.fastq.gz' \
-  --genome ref/genome.fa \
-  --genome_index ref/genome.fa.fai \
-  --species species_name \
-  --outdir results
+nextflow run main.nf   --analysis_mode paired   --reads 'data/*_{1,2}.fastq.gz'   --genome ref/genome.fa   --species species_name   --outdir results
 ```
 
 ## Optional repeat masking
 
 - Provide `--repeat_bed` when you want callable regions to exclude annotated repeats.
 - Omit it when you do not have a repeat annotation yet; the pipeline will keep the callable-bed generation and skip only the repeat subtraction step.
+
+## Reference indexing
+
+- Provide `--genome` only; the pipeline generates the corresponding `.fai` internally with `samtools faidx`.
+- This avoids having to pass a separate FASTA index path and reduces the risk of mismatching a FASTA with the wrong index.
 
 ## Mosdepth labels
 
@@ -84,6 +71,5 @@ nextflow run main.nf \
 
 ## Practical next steps
 
-- Convert raw FASTQ handling to a samplesheet-driven input channel.
 - Add tiny test data and a CI syntax test.
 - Replace local custom processes with upstream nf-core modules where it makes sense.

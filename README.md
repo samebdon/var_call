@@ -30,51 +30,25 @@ This repository is a learning-oriented cleanup of a custom Nextflow variant-call
 Paired-end reads:
 
 ```bash
-nextflow run main.nf \
-  --analysis_mode paired \
-  --input assets/samplesheet.csv \
-  --genome reference/genome.fa \
-  --genome_index reference/genome.fa.fai \
-  --species my_species \
-  --dataset_id my_species_reseq_2026 \
-  --outdir results \
-  -profile standard,conda
+nextflow run main.nf   --analysis_mode paired   --input assets/samplesheet.csv   --genome reference/genome.fa   --species my_species   --dataset_id my_species_reseq_2026   --outdir results   -profile standard,conda
 ```
 
 BAM input:
 
 ```bash
-nextflow run main.nf \
-  --analysis_mode bams \
-  --bams 'data/*.bam' \
-  --genome reference/genome.fa \
-  --genome_index reference/genome.fa.fai \
-  --species my_species \
-  --outdir results \
-  -profile cluster,conda
+nextflow run main.nf   --analysis_mode bams   --bams 'data/*.bam'   --genome reference/genome.fa   --species my_species   --outdir results   -profile lsf,conda
 ```
 
 Params-file driven cluster run:
 
 ```bash
-nextflow run main.nf \
-  -profile conda,cluster \
-  -params-file params/afusca_params.json \
-  -work-dir data/workdir/var_call \
-  -resume
+nextflow run main.nf   -profile conda,lsf   -params-file params/afusca_params.json   -work-dir data/workdir/var_call   -resume
 ```
 
 Legacy glob-based FASTQ input still works:
 
 ```bash
-nextflow run main.nf \
-  --analysis_mode paired \
-  --reads 'data/*_{1,2}.fastq.gz' \
-  --genome reference/genome.fa \
-  --genome_index reference/genome.fa.fai \
-  --repeat_bed reference/repeats.bed \
-  --species my_species \
-  --outdir results
+nextflow run main.nf   --analysis_mode paired   --reads 'data/*_{1,2}.fastq.gz'   --genome reference/genome.fa   --repeat_bed reference/repeats.bed   --species my_species   --outdir results
 ```
 
 ## Analysis modes
@@ -86,10 +60,11 @@ nextflow run main.nf \
 
 ## Input notes
 
-- Use `--input` with [assets/samplesheet.csv](/Users/se13/Documents/Codex/2026-04-20-files-mentioned-by-the-user-var/var_call/assets/samplesheet.csv) for paired-end runs.
-- Use `--input` with [assets/samplesheet_single_end.csv](/Users/se13/Documents/Codex/2026-04-20-files-mentioned-by-the-user-var/var_call/assets/samplesheet_single_end.csv) for single-end runs.
+- Use `--input` with [assets/samplesheet.csv](/Users/se13/workspace/projects/pipelines/var_call/assets/samplesheet.csv) for paired-end runs.
+- Use `--input` with [assets/samplesheet_single_end.csv](/Users/se13/workspace/projects/pipelines/var_call/assets/samplesheet_single_end.csv) for single-end runs.
 - `--reads` remains available as a simpler legacy option while you are still iterating on the pipeline.
 - `--repeat_bed` is optional. If omitted, callable regions are generated without repeat subtraction.
+- The pipeline generates the reference FASTA index (`.fai`) internally with `samtools faidx`.
 
 ## Metadata levels
 
@@ -105,4 +80,4 @@ nextflow run main.nf \
 - `MOSDEPTH_Q0` to `MOSDEPTH_Q3` are set automatically for the `MOSDEPTH_CALLABLE` process.
 - The next step toward closer nf-core alignment would be converting reusable steps to official nf-core modules and adding `nf-test` or small test data.
 
-See [docs/usage.md](/Users/se13/Documents/Codex/2026-04-20-files-mentioned-by-the-user-var/var_call/docs/usage.md) and [docs/output.md](/Users/se13/Documents/Codex/2026-04-20-files-mentioned-by-the-user-var/var_call/docs/output.md) for more detail.
+See [docs/usage.md](/Users/se13/workspace/projects/pipelines/var_call/docs/usage.md) and [docs/output.md](/Users/se13/workspace/projects/pipelines/var_call/docs/output.md) for more detail.

@@ -3,3 +3,11 @@
 2026-04-20 14:57:48	-	hopeful_snyder	-	51a42d438e6177868569cc0ab0537e87	fca2177c-8747-40be-aa94-e3b79fa41101	nextflow run main.nf --help
 2026-04-20 15:09:55	-	clever_hugle	-	23f40ee08af049faabe89ed19655a74e	29fbbd3e-8744-4d6f-82c2-3fd56aa1cfb8	nextflow run main.nf --help
 2026-04-20 15:15:54	-	loving_dubinsky	-	a0fea386f9dc44fdb6182b2702448ce8	c5d87796-c9bf-4071-bb37-0811fd745b6d	nextflow run main.nf --help
+2026-04-22 11:43:06	-	amazing_solvay	-	cf6c4852f61dcee19f0cca46075cd727	a20514de-283b-4aaa-a169-544195d2f11b	nextflow run main.nf --help
+2026-04-22 11:48:11	-	lethal_leavitt	-	cf6c4852f61dcee19f0cca46075cd727	f5efe61b-dbca-44d8-919c-1de04d52eafe	nextflow run main.nf -profile conda,lsf -params-file params/afusca_rnaseq.json -preview --analysis_mode bams
+2026-04-22 11:48:13	-	nauseous_poitras	-	cf6c4852f61dcee19f0cca46075cd727	a8e88895-a662-4883-b6bc-d0f2f9829c70	nextflow run main.nf -profile conda,lsf -params-file params/afusca_params.json -preview
+2026-04-22 11:49:08	12.5s	astonishing_caravaggio	OK	cf6c4852f61dcee19f0cca46075cd727	a5c9083b-ca82-4e5e-8163-a125fc5431db	nextflow run main.nf -profile conda,lsf -params-file params/afusca_rnaseq.json -preview --analysis_mode bams
+2026-04-22 11:49:08	12.5s	extravagant_nobel	OK	cf6c4852f61dcee19f0cca46075cd727	6459a25b-1dfb-429a-9933-9a89dc719256	nextflow run main.nf -profile conda,lsf -params-file params/afusca_params.json -preview
+2026-04-22 11:55:45	5.1s	cheesy_roentgen	OK	cf6c4852f61dcee19f0cca46075cd727	f5dbdcfb-6596-4245-89be-1d2ff90a88fe	nextflow run main.nf -profile conda,lsf -params-file params/afusca_rnaseq.json -preview --analysis_mode bams
+2026-04-22 11:55:45	5.1s	big_goldstine	OK	cf6c4852f61dcee19f0cca46075cd727	04655e9a-bdf5-460e-a834-19f99a225081	nextflow run main.nf -profile conda,lsf -params-file params/afusca_params.json -preview
+2026-04-22 11:55:45	-	peaceful_bose	-	cf6c4852f61dcee19f0cca46075cd727	8fef5bcb-a64f-4b33-99d7-8376300fac94	nextflow run main.nf --help

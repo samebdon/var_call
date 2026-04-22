@@ -14,16 +14,7 @@ process TRIM_READS {
     script:
     """
     mkdir -p fastp
-    fastp \
-        -i ${reads[0]} \
-        -I ${reads[1]} \
-        -o fastp/${meta}.1.fastp.fastq.gz \
-        -O fastp/${meta}.2.fastp.fastq.gz \
-        --length_required 33 \
-        --cut_front \
-        --cut_tail \
-        --cut_mean_quality 20 \
-        --thread ${task.cpus}
+    fastp         -i ${reads[0]}         -I ${reads[1]}         -o fastp/${meta}.1.fastp.fastq.gz         -O fastp/${meta}.2.fastp.fastq.gz         --length_required 33         --cut_front         --cut_tail         --cut_mean_quality 20         --thread ${task.cpus}
     """
 }
 
@@ -42,6 +33,21 @@ process BWA_INDEX {
     """
 }
 
+process SAMTOOLS_FAIDX {
+    tag "$genome_f.baseName"
+
+    input:
+    path(genome_f)
+
+    output:
+    path("${genome_f}.fai")
+
+    script:
+    """
+    samtools faidx ${genome_f}
+    """
+}
+
 process BWA_MEM {
     tag "$meta"
 
@@ -49,7 +55,6 @@ process BWA_MEM {
 
     input:
     path(genome_f)
-    path(genome_index)
     tuple val(meta), path(reads)
 
     output:
@@ -58,13 +63,7 @@ process BWA_MEM {
     script:
     """
     mkdir -p bwamem
-    bwa mem \
-        -t ${task.cpus} \
-        -R "@RG\\tID:${meta}\\tSM:${meta}\\tPL:ILLUMINA\\tPU:${meta}\\tLB:${meta}\\tDS:${meta}" \
-        ${genome_f} \
-        ${reads[0]} \
-        ${reads[1]} | \
-    sambamba view -t ${task.cpus} -S -f bam /dev/stdin > bwamem/${meta}.${genome_f.baseName}.bam
+    bwa mem         -t ${task.cpus}         -R "@RG\tID:${meta}\tSM:${meta}\tPL:ILLUMINA\tPU:${meta}\tLB:${meta}\tDS:${meta}"         ${genome_f}         ${reads[0]}         ${reads[1]} |     sambamba view -t ${task.cpus} -S -f bam /dev/stdin > bwamem/${meta}.${genome_f.baseName}.bam
     """
 }
 
@@ -75,7 +74,6 @@ process BWA_MEM_SE {
 
     input:
     path(genome_f)
-    path(genome_index)
     tuple val(meta), path(reads)
 
     output:
@@ -84,12 +82,7 @@ process BWA_MEM_SE {
     script:
     """
     mkdir -p bwamem
-    bwa mem \
-        -t ${task.cpus} \
-        -R "@RG\\tID:${meta}\\tSM:${meta}\\tPL:ILLUMINA\\tPU:${meta}\\tLB:${meta}\\tDS:${meta}" \
-        ${genome_f} \
-        ${reads} | \
-    sambamba view -t ${task.cpus} -S -f bam /dev/stdin > bwamem/${meta}.${genome_f.baseName}.bam
+    bwa mem         -t ${task.cpus}         -R "@RG\tID:${meta}\tSM:${meta}\tPL:ILLUMINA\tPU:${meta}\tLB:${meta}\tDS:${meta}"         ${genome_f}         ${reads} |     sambamba view -t ${task.cpus} -S -f bam /dev/stdin > bwamem/${meta}.${genome_f.baseName}.bam
     """
 }
 
@@ -105,10 +98,7 @@ process ADD_RGS {
 
     script:
     """
-    samtools addreplacerg \
-        -r "ID:${meta}\\tSM:${meta}\\tLB:${meta}\\tPL:${meta}\\tPU:${meta}" \
-        -o ${meta}.RG.bam \
-        ${bam}
+    samtools addreplacerg         -r "ID:${meta}\tSM:${meta}\tLB:${meta}\tPL:${meta}\tPU:${meta}"         -o ${meta}.RG.bam         ${bam}
     """
 }
 
@@ -180,7 +170,7 @@ process MOSDEPTH_CALLABLE {
     """
     mkdir -p mosdepth
     mosdepth --fast-mode -t ${task.cpus} tmp ${bam_f}
-    MAX_DEPTH="\$(max_depth.py -b tmp.per-base.bed.gz)"
+    MAX_DEPTH="\$(callable_upper_depth.py -b tmp.per-base.bed.gz)"
     mosdepth -t ${task.cpus} -n --quantize 0:1:${min_depth}:\${MAX_DEPTH}: ${meta} ${bam_f}
     zcat ${meta}.quantized.bed.gz | grep 'CALLABLE' > mosdepth/${bam_f.baseName}.callable.bed
     """
@@ -207,9 +197,7 @@ process INTERSECT_BEDS {
     N_FILES="\$(ls inputs/*.bed | wc -l)"
     bedtools multiinter -i inputs/*.bed | cut -f1-5 | bedtools sort -faidx ${genome_index} > ${species}.callable.all.bed
     awk -v var=\$N_FILES '\$4==var' ${species}.callable.all.bed | cut -f1-3 > ${species}.callable.freebayes.bed
-    bedtools subtract -a ${species}.callable.freebayes.bed -b ${repeat_bed} | \
-        bedtools sort -faidx ${genome_index} | \
-        bedtools merge > ${species}.callable.freebayes.norepeats.bed
+    bedtools subtract -a ${species}.callable.freebayes.bed -b ${repeat_bed} |         bedtools sort -faidx ${genome_index} |         bedtools merge > ${species}.callable.freebayes.norepeats.bed
     """
 }
 
@@ -232,9 +220,7 @@ process INTERSECT_BEDS_NO_REPEATS {
     """
     N_FILES="\$(ls inputs/*.bed | wc -l)"
     bedtools multiinter -i inputs/*.bed | cut -f1-5 | bedtools sort -faidx ${genome_index} > ${species}.callable.all.bed
-    awk -v var=\$N_FILES '\$4==var' ${species}.callable.all.bed | cut -f1-3 | \
-        bedtools sort -faidx ${genome_index} | \
-        bedtools merge > ${species}.callable.freebayes.norepeats.bed
+    awk -v var=\$N_FILES '\$4==var' ${species}.callable.all.bed | cut -f1-3 |         bedtools sort -faidx ${genome_index} |         bedtools merge > ${species}.callable.freebayes.norepeats.bed
     """
 }
 
@@ -255,9 +241,7 @@ process INTERSECT_BED {
 
     script:
     """
-    bedtools subtract -a ${bed} -b ${repeat_bed} | \
-        bedtools sort -faidx ${genome_index} | \
-        bedtools merge > ${species}.callable.freebayes.norepeats.bed
+    bedtools subtract -a ${bed} -b ${repeat_bed} |         bedtools sort -faidx ${genome_index} |         bedtools merge > ${species}.callable.freebayes.norepeats.bed
     """
 }
 
@@ -277,8 +261,7 @@ process INTERSECT_BED_NO_REPEATS {
 
     script:
     """
-    bedtools sort -faidx ${genome_index} -i ${bed} | \
-        bedtools merge > ${species}.callable.freebayes.norepeats.bed
+    bedtools sort -faidx ${genome_index} -i ${bed} |         bedtools merge > ${species}.callable.freebayes.norepeats.bed
     """
 }
 
@@ -309,7 +292,6 @@ process FREEBAYES {
 
     input:
     path(genome_f)
-    path(genome_index)
     tuple val(meta), path(bam_f), path(bam_index)
     tuple val(species), path(bed_f)
 
@@ -335,13 +317,7 @@ process BCFTOOLS_FILTER {
 
     script:
     """
-    bcftools norm --threads ${task.cpus} -Ov -f ${genome} ${vcf_f} | \
-    vcfallelicprimitives --keep-info --keep-geno -t decomposed | \
-    bcftools +fill-tags --threads ${task.cpus} -Oz -- -t AN,AC,F_MISSING | \
-    bcftools filter --threads ${task.cpus} -Oz -s Qual -m+ -e 'QUAL<10' | \
-    bcftools filter --threads ${task.cpus} -Oz -s Balance -m+ -e 'RPL<1 | RPR<1 | SAF<1 | SAR<1' | \
-    bcftools filter --threads ${task.cpus} -Oz -m+ -s+ --SnpGap 2 | \
-    bcftools filter --threads ${task.cpus} -Oz -e 'TYPE!="snp"' -s NonSnp -m+ > ${vcf_f.baseName}.soft_filtered.vcf.gz
+    bcftools norm --threads ${task.cpus} -Ov -f ${genome} ${vcf_f} |     vcfallelicprimitives --keep-info --keep-geno -t decomposed |     bcftools +fill-tags --threads ${task.cpus} -Oz -- -t AN,AC,F_MISSING |     bcftools filter --threads ${task.cpus} -Oz -s Qual -m+ -e 'QUAL<10' |     bcftools filter --threads ${task.cpus} -Oz -s Balance -m+ -e 'RPL<1 | RPR<1 | SAF<1 | SAR<1' |     bcftools filter --threads ${task.cpus} -Oz -m+ -s+ --SnpGap 2 |     bcftools filter --threads ${task.cpus} -Oz -e 'TYPE!="snp"' -s NonSnp -m+ > ${vcf_f.baseName}.soft_filtered.vcf.gz
     """
 }
 
@@ -360,10 +336,7 @@ process GENERATE_FAIL_BED {
 
     script:
     """
-    bcftools view --threads ${task.cpus} -H -i "FILTER!='PASS'" ${vcf_f} | \
-    perl -lane '\$pad=0; print(\$F[0]."\\t".(\$F[1]-1)."\\t".((\$F[1]-1)+length(\$F[3]))."\\t".\$F[6])' | \
-    bedtools sort -faidx ${genome_index} | \
-    bedtools merge > ${species}.vcf_filter_fails.bed
+    bcftools view --threads ${task.cpus} -H -i "FILTER!='PASS'" ${vcf_f} |     perl -lane '\$pad=0; print(\$F[0]."\t".(\$F[1]-1)."\t".((\$F[1]-1)+length(\$F[3]))."\t".\$F[6])' |     bedtools sort -faidx ${genome_index} |     bedtools merge > ${species}.vcf_filter_fails.bed
     """
 }
 
@@ -398,9 +371,7 @@ process BEDTOOLS_SUBTRACT {
 
     script:
     """
-    bedtools subtract -a ${a_bed} -b ${b_bed} | \
-        bedtools sort -faidx ${genome_index} | \
-        bedtools merge > ${species}.callable.bed
+    bedtools subtract -a ${a_bed} -b ${b_bed} |         bedtools sort -faidx ${genome_index} |         bedtools merge > ${species}.callable.bed
     """
 }
 

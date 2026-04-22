@@ -2,6 +2,27 @@
   "name": "var_call",
   "description": "Placeholder module manifest for a learning-oriented nf-core style cleanup.",
   "local_modules": [
-    "modules/local/var_call.nf"
+    "modules/local/add_rgs.nf",
+    "modules/local/bcftools_filter.nf",
+    "modules/local/bcftools_index.nf",
+    "modules/local/bcftools_sort.nf",
+    "modules/local/bedtools_subtract.nf",
+    "modules/local/bwa_index.nf",
+    "modules/local/bwa_mem.nf",
+    "modules/local/bwa_mem_se.nf",
+    "modules/local/freebayes.nf",
+    "modules/local/generate_fail_bed.nf",
+    "modules/local/generate_pass_vcf.nf",
+    "modules/local/index_bam_sambamba.nf",
+    "modules/local/intersect_bed.nf",
+    "modules/local/intersect_bed_no_repeats.nf",
+    "modules/local/intersect_beds.nf",
+    "modules/local/intersect_beds_no_repeats.nf",
+    "modules/local/mark_dupes_sambamba.nf",
+    "modules/local/mosdepth_callable.nf",
+    "modules/local/sambamba_merge.nf",
+    "modules/local/samtools_faidx.nf",
+    "modules/local/sort_bam_sambamba.nf",
+    "modules/local/trim_reads.nf"
   ]
 }

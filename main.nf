@@ -14,15 +14,14 @@ def helpMessage() {
     nf-core style learning pipeline: var_call
 
     Usage:
-      nextflow run main.nf --analysis_mode paired --input samplesheet.csv --genome genome.fa --genome_index genome.fa.fai --outdir results --species my_species --dataset_id my_run
+      nextflow run main.nf --analysis_mode paired --input samplesheet.csv --genome genome.fa --outdir results --species my_species --dataset_id my_run
 
     Cluster example:
-      nextflow run main.nf -profile conda,cluster -params-file params/afusca_params.json -work-dir data/workdir/var_call -resume
+      nextflow run main.nf -profile conda,lsf -params-file params/afusca_params.json -work-dir data/workdir/var_call -resume
 
     Required parameters:
       --analysis_mode         One of: paired, single_paired, single_end, bams
       --genome                Reference genome FASTA
-      --genome_index          FASTA index (.fai)
       --outdir                Output directory
       --species               Dataset-wide species label
 
@@ -39,6 +38,7 @@ def helpMessage() {
     Notes:
       Use -params-file for dataset-specific run settings.
       Use -work-dir to place the Nextflow working directory on cluster scratch or project storage.
+      The pipeline generates the FASTA index (.fai) internally with samtools faidx.
       The pipeline sets MOSDEPTH_Q0-3 automatically for the mosdepth process.
     """.stripIndent()
 }
@@ -73,7 +73,7 @@ def validateParams() {
         System.exit(0)
     }
 
-    def required = ['analysis_mode', 'genome', 'genome_index', 'outdir', 'species']
+    def required = ['analysis_mode', 'genome', 'outdir', 'species']
     def missing = required.findAll { !params[it] }
     if (missing) {
         error "Missing required parameter(s): ${missing.join(', ')}"
@@ -98,3 +98,44 @@ def validateParams() {
 }
 
 def logParameters() {
+    log.info """
+        V A R   C A L L
+        ============================
+        analysis_mode : ${params.analysis_mode}
+        genome        : ${params.genome}
+        input         : ${params.input ?: 'N/A'}
+        reads         : ${params.reads ?: 'N/A'}
+        bams          : ${params.bams ?: 'N/A'}
+        repeat_bed    : ${params.repeat_bed ?: 'N/A'}
+        outdir        : ${params.outdir}
+        species       : ${params.species}
+        dataset_id    : ${params.dataset_id ?: 'N/A'}
+        run_label     : ${params.dataset_id ?: params.species}
+        skip_trimming : ${params.skip_trimming}
+    """.stripIndent()
+}
+
+workflow {
+    validateParams()
+    logParameters()
+
+    if (params.analysis_mode == 'paired') {
+        read_pairs_ch = params.input ? pairedSamplesheetChannel(params.input) : Channel.fromFilePairs(params.reads, checkIfExists: true)
+        VAR_CALL_PAIRED(params.genome, read_pairs_ch, params.repeat_bed, params.species, params.dataset_id ?: params.species, params.skip_trimming)
+    }
+
+    if (params.analysis_mode == 'single_paired') {
+        read_pairs_ch = params.input ? pairedSamplesheetChannel(params.input) : Channel.fromFilePairs(params.reads, checkIfExists: true)
+        VAR_CALL_SINGLE_PAIRED(params.genome, read_pairs_ch, params.repeat_bed, params.species, params.dataset_id ?: params.species, params.skip_trimming)
+    }
+
+    if (params.analysis_mode == 'single_end') {
+        reads_ch = params.input ? singleEndSamplesheetChannel(params.input) : Channel.fromPath(params.reads, checkIfExists: true).map { read -> [read.baseName, read] }
+        VAR_CALL_SINGLE_END(params.genome, reads_ch, params.repeat_bed, params.species, params.dataset_id ?: params.species)
+    }
+
+    if (params.analysis_mode == 'bams') {
+        bam_ch = Channel.fromPath(params.bams, checkIfExists: true)
+        VAR_CALL_BAMS(params.genome, bam_ch, params.repeat_bed, params.species, params.dataset_id ?: params.species)
+    }
+}

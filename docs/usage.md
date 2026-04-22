@@ -14,6 +14,20 @@ nextflow run main.nf \
   -profile standard,conda
 ```
 
+## Cluster run with a params file
+
+```bash
+nextflow run main.nf \
+  -profile conda,cluster \
+  -params-file params/afusca_params.json \
+  -work-dir data/workdir/var_call \
+  -resume
+```
+
+- `-params-file` is the cleanest way to keep dataset-specific settings outside the main command.
+- `-work-dir` is the standard Nextflow option for choosing the working directory location.
+- `-resume` reuses completed tasks from the existing work directory.
+
 ## Samplesheet formats
 
 Paired-end:
@@ -49,6 +63,11 @@ nextflow run main.nf \
 - Provide `--repeat_bed` when you want callable regions to exclude annotated repeats.
 - Omit it when you do not have a repeat annotation yet; the pipeline will keep the callable-bed generation and skip only the repeat subtraction step.
 
+## Mosdepth labels
+
+- The pipeline sets `MOSDEPTH_Q0`, `MOSDEPTH_Q1`, `MOSDEPTH_Q2`, and `MOSDEPTH_Q3` automatically for the `MOSDEPTH_CALLABLE` process.
+- You do not need to export these manually in your job wrapper unless you want to override the defaults.
+
 ## Metadata guidance
 
 - Use the samplesheet `sample` column for per-sample identifiers only.
@@ -61,6 +80,7 @@ nextflow run main.nf \
 - Keep entry selection in `main.nf`, not in commented alternative workflows.
 - Use `conf/` for environment-specific settings such as local, test, and cluster execution.
 - Keep reusable logic in `workflows/` and implementation-heavy processes in `modules/local/`.
+- Keep head-job submission details such as `bsub` directives and `module load nextflow/...` in your wrapper script rather than inside the pipeline.
 
 ## Practical next steps
 

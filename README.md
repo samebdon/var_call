@@ -54,6 +54,16 @@ nextflow run main.nf \
   -profile cluster,conda
 ```
 
+Params-file driven cluster run:
+
+```bash
+nextflow run main.nf \
+  -profile conda,cluster \
+  -params-file params/afusca_params.json \
+  -work-dir data/workdir/var_call \
+  -resume
+```
+
 Legacy glob-based FASTQ input still works:
 
 ```bash
@@ -90,6 +100,9 @@ nextflow run main.nf \
 ## Notes
 
 - This cleanup keeps the original custom processes together in `modules/local/var_call.nf` because that is a practical intermediate step when learning nf-core organisation.
+- Head-job submission details such as `bsub` directives and `module load nextflow/...` are intentionally kept outside the pipeline.
+- The Conda environment already includes the tools used by this refactored pipeline, including `bcftools` and `samtools`, so extra tool modules are usually unnecessary when running with `-profile conda`.
+- `MOSDEPTH_Q0` to `MOSDEPTH_Q3` are set automatically for the `MOSDEPTH_CALLABLE` process.
 - The next step toward closer nf-core alignment would be converting reusable steps to official nf-core modules and adding `nf-test` or small test data.
 
 See [docs/usage.md](/Users/se13/Documents/Codex/2026-04-20-files-mentioned-by-the-user-var/var_call/docs/usage.md) and [docs/output.md](/Users/se13/Documents/Codex/2026-04-20-files-mentioned-by-the-user-var/var_call/docs/output.md) for more detail.

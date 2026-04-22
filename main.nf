@@ -16,6 +16,9 @@ def helpMessage() {
     Usage:
       nextflow run main.nf --analysis_mode paired --input samplesheet.csv --genome genome.fa --genome_index genome.fa.fai --outdir results --species my_species --dataset_id my_run
 
+    Cluster example:
+      nextflow run main.nf -profile conda,cluster -params-file params/afusca_params.json -work-dir data/workdir/var_call -resume
+
     Required parameters:
       --analysis_mode         One of: paired, single_paired, single_end, bams
       --genome                Reference genome FASTA
@@ -32,6 +35,11 @@ def helpMessage() {
     Useful flags:
       --skip_trimming         Skip fastp in paired-read modes
       --help                  Show this help message
+
+    Notes:
+      Use -params-file for dataset-specific run settings.
+      Use -work-dir to place the Nextflow working directory on cluster scratch or project storage.
+      The pipeline sets MOSDEPTH_Q0-3 automatically for the mosdepth process.
     """.stripIndent()
 }
 
@@ -90,45 +98,3 @@ def validateParams() {
 }
 
 def logParameters() {
-    log.info """
-        V A R   C A L L
-        ============================
-        analysis_mode : ${params.analysis_mode}
-        genome        : ${params.genome}
-        genome_index  : ${params.genome_index}
-        input         : ${params.input ?: 'N/A'}
-        reads         : ${params.reads ?: 'N/A'}
-        bams          : ${params.bams ?: 'N/A'}
-        repeat_bed    : ${params.repeat_bed ?: 'N/A'}
-        outdir        : ${params.outdir}
-        species       : ${params.species}
-        dataset_id    : ${params.dataset_id ?: 'N/A'}
-        run_label     : ${params.dataset_id ?: params.species}
-        skip_trimming : ${params.skip_trimming}
-    """.stripIndent()
-}
-
-workflow {
-    validateParams()
-    logParameters()
-
-    if (params.analysis_mode == 'paired') {
-        read_pairs_ch = params.input ? pairedSamplesheetChannel(params.input) : Channel.fromFilePairs(params.reads, checkIfExists: true)
-        VAR_CALL_PAIRED(params.genome, params.genome_index, read_pairs_ch, params.repeat_bed, params.species, params.dataset_id ?: params.species, params.skip_trimming)
-    }
-
-    if (params.analysis_mode == 'single_paired') {
-        read_pairs_ch = params.input ? pairedSamplesheetChannel(params.input) : Channel.fromFilePairs(params.reads, checkIfExists: true)
-        VAR_CALL_SINGLE_PAIRED(params.genome, params.genome_index, read_pairs_ch, params.repeat_bed, params.species, params.dataset_id ?: params.species, params.skip_trimming)
-    }
-
-    if (params.analysis_mode == 'single_end') {
-        reads_ch = params.input ? singleEndSamplesheetChannel(params.input) : Channel.fromPath(params.reads, checkIfExists: true).map { read -> [read.baseName, read] }
-        VAR_CALL_SINGLE_END(params.genome, params.genome_index, reads_ch, params.repeat_bed, params.species, params.dataset_id ?: params.species)
-    }
-
-    if (params.analysis_mode == 'bams') {
-        bam_ch = Channel.fromPath(params.bams, checkIfExists: true)
-        VAR_CALL_BAMS(params.genome, params.genome_index, bam_ch, params.repeat_bed, params.species, params.dataset_id ?: params.species)
-    }
-}

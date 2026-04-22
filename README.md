@@ -7,31 +7,31 @@ Freebayes variant-calling pipeline for paired-end reads, single-end reads, or BA
 Glob-based FASTQ input:
 
 ```bash
-nextflow run main.nf   --analysis_mode paired   --reads 'data/*_{1,2}.fastq.gz'   --genome reference/genome.fa   --repeat_bed reference/repeats.bed   --species my_species   --outdir results
+nextflow run var_call   --analysis_mode paired   --reads 'data/*_{1,2}.fastq.gz'   --genome reference/genome.fa   --repeat_bed reference/repeats.bed   --species my_species   --outdir results
 ```
 
 Paired-end reads:
 
 ```bash
-nextflow run main.nf   --analysis_mode paired   --input assets/samplesheet.csv   --genome reference/genome.fa   --species my_species   --dataset_id my_species_reseq_2026   --outdir results   -profile standard,conda
+nextflow run var_call   --analysis_mode paired   --input assets/samplesheet.csv   --genome reference/genome.fa   --species my_species   --dataset_id my_species_reseq_2026   --outdir results   -profile standard,conda
 ```
 
 Params-file cluster run with Conda:
 
 ```bash
-nextflow run main.nf   -profile conda,lsf   -params-file params/afusca_params.json   -work-dir data/workdir/var_call   -resume
+nextflow run var_call   -profile conda,lsf   -params-file params/afusca_params.json   -work-dir data/workdir/var_call   -resume
 ```
 
 BAM input:
 
 ```bash
-nextflow run main.nf   --analysis_mode bams   --bams 'data/*.bam'   --genome reference/genome.fa   --species my_species   --outdir results   -profile lsf,conda
+nextflow run var_call   --analysis_mode bams   --bams 'data/*.bam'   --genome reference/genome.fa   --species my_species   --outdir results   -profile lsf,conda
 ```
 
 Params-file cluster run with Apptainer:
 
 ```bash
-nextflow run main.nf   -profile apptainer,lsf   -params-file params/afusca_params.json   --apptainer_container /path/to/var_call.sif   -work-dir data/workdir/var_call   -resume
+nextflow run var_call   -profile apptainer,lsf   -params-file params/afusca_params.json   --apptainer_container /path/to/var_call.sif   -work-dir data/workdir/var_call   -resume
 ```
 
 ## Analysis modes

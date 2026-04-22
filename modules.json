@@ -1,6 +1,6 @@
 {
   "name": "var_call",
-  "description": "Placeholder module manifest for a learning-oriented nf-core style cleanup.",
+  "description": "Module manifest.",
   "local_modules": [
     "modules/local/add_rgs.nf",
     "modules/local/bcftools_filter.nf",

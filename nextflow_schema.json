@@ -9,7 +9,7 @@
       "properties": {
         "analysis_mode": {
           "type": "string",
-          "enum": ["paired", "single_paired", "single_end", "bams"],
+          "enum": ["paired", "single_end", "bams"],
           "description": "Pipeline entry mode."
         },
         "input": {
@@ -18,7 +18,7 @@
         },
         "reads": {
           "type": "string",
-          "description": "Legacy glob path to FASTQ input files."
+          "description": "Glob path to FASTQ input files."
         },
         "bams": {
           "type": "string",
@@ -43,6 +43,14 @@
         "outdir": {
           "type": "string",
           "description": "Directory where result files will be published."
+        },
+        "apptainer_container": {
+          "type": "string",
+          "description": "Path to a prebuilt Apptainer/Singularity .sif image used with the apptainer profile."
+        },
+        "apptainer_cache_dir": {
+          "type": "string",
+          "description": "Optional cache directory for Apptainer/Singularity image metadata and pulls."
         }
       }
     },

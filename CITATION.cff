@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+title: var_call
+message: "If you use this pipeline, please cite it using the metadata below."
+type: software
+authors:
+  - family-names: Ebdon
+    given-names: Sam
+repository-code: "https://github.com/YOUR-USER/var_call"
+abstract: "Freebayes variant-calling pipeline for paired-end reads, single-end reads, or BAM inputs."
+keywords:
+  - nextflow
+  - variant-calling
+  - freebayes
+  - genomics
+license: MIT
+version: 1.0.0
+date-released: 2026-04-22

@@ -4,7 +4,6 @@ nextflow.enable.dsl = 2
 
 include {
     VAR_CALL_PAIRED
-    VAR_CALL_SINGLE_PAIRED
     VAR_CALL_SINGLE_END
     VAR_CALL_BAMS
 } from './workflows/var_call'
@@ -16,30 +15,30 @@ def helpMessage() {
     Usage:
       nextflow run main.nf --analysis_mode paired --input samplesheet.csv --genome genome.fa --outdir results --species my_species --dataset_id my_run
 
-    Cluster example:
+    Cluster example (Conda):
       nextflow run main.nf -profile conda,lsf -params-file params/afusca_params.json -work-dir data/workdir/var_call -resume
 
+    Cluster example (Apptainer): IN PROGRESS
+      nextflow run main.nf -profile apptainer,lsf -params-file params/afusca_params.json --apptainer_container /path/to/var_call.sif -work-dir data/workdir/var_call -resume
+
     Required parameters:
-      --analysis_mode         One of: paired, single_paired, single_end, bams
+      --analysis_mode         One of: paired, single_end, bams
       --genome                Reference genome FASTA
       --outdir                Output directory
       --species               Dataset-wide species label
 
     Mode-specific parameters:
       --input                 CSV samplesheet for FASTQ-based modes
-      --reads                 Legacy FASTQ glob for paired / single_paired / single_end
+      --reads                 FASTQ glob for paired / single_end
       --bams                  Input BAM glob for bams mode
       --repeat_bed            Optional BED of repeat regions to exclude
       --dataset_id            Optional dataset/run label used for merged outputs
+      --apptainer_container   Path to a .sif image when using -profile apptainer
+      --apptainer_cache_dir   Optional cache directory for Apptainer/Singularity pulls and metadata
+    
     Useful flags:
-      --skip_trimming         Skip fastp in paired-read modes
+      --skip_trimming         Skip fastp in paired-read workflows
       --help                  Show this help message
-
-    Notes:
-      Use -params-file for dataset-specific run settings.
-      Use -work-dir to place the Nextflow working directory on cluster scratch or project storage.
-      The pipeline generates the FASTA index (.fai) internally with samtools faidx.
-      The pipeline sets MOSDEPTH_Q0-3 automatically for the mosdepth process.
     """.stripIndent()
 }
 
@@ -79,7 +78,7 @@ def validateParams() {
         error "Missing required parameter(s): ${missing.join(', ')}"
     }
 
-    def validModes = ['paired', 'single_paired', 'single_end', 'bams']
+    def validModes = ['paired', 'single_end', 'bams']
     if (!(params.analysis_mode in validModes)) {
         error "Invalid --analysis_mode '${params.analysis_mode}'. Choose one of: ${validModes.join(', ')}"
     }
@@ -95,23 +94,28 @@ def validateParams() {
     if (params.analysis_mode == 'bams' && params.input) {
         error "Parameter --input is only supported for FASTQ-based analysis modes"
     }
+
+    if (workflow.profile?.tokenize(',')?.contains('apptainer') && !params.apptainer_container) {
+        error "Provide --apptainer_container when using -profile apptainer"
+    }
 }
 
 def logParameters() {
     log.info """
         V A R   C A L L
         ============================
-        analysis_mode : ${params.analysis_mode}
-        genome        : ${params.genome}
-        input         : ${params.input ?: 'N/A'}
-        reads         : ${params.reads ?: 'N/A'}
-        bams          : ${params.bams ?: 'N/A'}
-        repeat_bed    : ${params.repeat_bed ?: 'N/A'}
-        outdir        : ${params.outdir}
-        species       : ${params.species}
-        dataset_id    : ${params.dataset_id ?: 'N/A'}
-        run_label     : ${params.dataset_id ?: params.species}
-        skip_trimming : ${params.skip_trimming}
+        analysis_mode       : ${params.analysis_mode}
+        genome              : ${params.genome}
+        input               : ${params.input ?: 'N/A'}
+        reads               : ${params.reads ?: 'N/A'}
+        bams                : ${params.bams ?: 'N/A'}
+        repeat_bed          : ${params.repeat_bed ?: 'N/A'}
+        outdir              : ${params.outdir}
+        species             : ${params.species}
+        dataset_id          : ${params.dataset_id ?: 'N/A'}
+        run_label           : ${params.dataset_id ?: params.species}
+        apptainer_container : ${params.apptainer_container ?: 'N/A'}
+        skip_trimming       : ${params.skip_trimming}
     """.stripIndent()
 }
 
@@ -122,11 +126,6 @@ workflow {
     if (params.analysis_mode == 'paired') {
         read_pairs_ch = params.input ? pairedSamplesheetChannel(params.input) : Channel.fromFilePairs(params.reads, checkIfExists: true)
         VAR_CALL_PAIRED(params.genome, read_pairs_ch, params.repeat_bed, params.species, params.dataset_id ?: params.species, params.skip_trimming)
-    }
-
-    if (params.analysis_mode == 'single_paired') {
-        read_pairs_ch = params.input ? pairedSamplesheetChannel(params.input) : Channel.fromFilePairs(params.reads, checkIfExists: true)
-        VAR_CALL_SINGLE_PAIRED(params.genome, read_pairs_ch, params.repeat_bed, params.species, params.dataset_id ?: params.species, params.skip_trimming)
     }
 
     if (params.analysis_mode == 'single_end') {

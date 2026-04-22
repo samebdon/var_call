@@ -1,3 +1,6 @@
 results
 work
 data
+.nextflow*
+*DS_Store*
+CHANGELOG.md

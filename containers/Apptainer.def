@@ -1,0 +1,40 @@
+Bootstrap: docker
+From: continuumio/miniconda3:24.5.0-0
+
+%labels
+    Author Sam Ebdon
+    Description var_call software stack for Apptainer-based Nextflow runs
+
+%files
+    params/var_call.yaml /tmp/var_call.yaml
+
+%post
+    set -euo pipefail
+
+    conda env update -n base -f /tmp/var_call.yaml
+    conda clean -afy
+
+    mkdir -p /opt/var_call
+    cat <<'EOM' > /opt/var_call/ENVIRONMENT.txt
+var_call Apptainer image
+
+This image was built from params/var_call.yaml.
+The pipeline project directory is expected to be bind-mounted by Nextflow,
+including the project's bin/ directory.
+EOM
+
+%environment
+    export LC_ALL=C
+    export LANG=C
+    export PATH=/opt/conda/bin:$PATH
+
+%runscript
+    exec "$@"
+
+%test
+    set -e
+    bwa 2>&1 | head -n 1
+    samtools --version | head -n 1
+    bcftools --version | head -n 1
+    freebayes --version
+    python --version

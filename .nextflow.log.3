@@ -1,110 +1,74 @@
-Apr-22 11:49:08.062 [main] DEBUG nextflow.cli.Launcher - $> nextflow run main.nf -profile conda,lsf -params-file params/afusca_params.json -preview
-Apr-22 11:49:08.125 [main] INFO  nextflow.cli.CmdRun - N E X T F L O W  ~  version 22.10.7
-Apr-22 11:49:08.139 [main] DEBUG nextflow.plugin.PluginsFacade - Setting up plugin manager > mode=prod; embedded=false; plugins-dir=/Users/se13/.nextflow/plugins; core-plugins: nf-amazon@1.11.4,nf-azure@0.14.2,nf-codecommit@0.1.2,nf-console@1.0.4,nf-ga4gh@1.0.4,nf-google@1.4.5,nf-tower@1.5.6,nf-wave@0.5.4
-Apr-22 11:49:08.147 [main] INFO  org.pf4j.DefaultPluginStatusProvider - Enabled plugins: []
-Apr-22 11:49:08.147 [main] INFO  org.pf4j.DefaultPluginStatusProvider - Disabled plugins: []
-Apr-22 11:49:08.149 [main] INFO  org.pf4j.DefaultPluginManager - PF4J version 3.4.1 in 'deployment' mode
-Apr-22 11:49:08.155 [main] INFO  org.pf4j.AbstractPluginManager - No plugins
-Apr-22 11:49:08.166 [main] DEBUG nextflow.config.ConfigBuilder - Found config local: /Users/se13/workspace/projects/pipelines/var_call/nextflow.config
-Apr-22 11:49:08.167 [main] DEBUG nextflow.config.ConfigBuilder - Parsing config file: /Users/se13/workspace/projects/pipelines/var_call/nextflow.config
-Apr-22 11:49:08.196 [main] DEBUG nextflow.config.ConfigBuilder - Applying config profile: `conda,lsf`
-Apr-22 11:49:08.789 [main] DEBUG nextflow.config.ConfigBuilder - Available config profiles: [standard, test, conda, lsf]
-Apr-22 11:49:08.814 [main] DEBUG nextflow.cli.CmdRun - Applied DSL=2 from script declararion
-Apr-22 11:49:08.831 [main] INFO  nextflow.cli.CmdRun - * PREVIEW * null [extravagant_nobel] DSL2 - revision: cf6c4852f6
-Apr-22 11:49:08.831 [main] DEBUG nextflow.plugin.PluginsFacade - Plugins default=[]
-Apr-22 11:49:08.831 [main] DEBUG nextflow.plugin.PluginsFacade - Plugins resolved requirement=[]
-Apr-22 11:49:08.840 [main] DEBUG nextflow.secret.LocalSecretsProvider - Secrets store: /Users/se13/.nextflow/secrets/store.json
-Apr-22 11:49:08.842 [main] DEBUG nextflow.secret.SecretsLoader - Discovered secrets providers: [nextflow.secret.LocalSecretsProvider@6ab4a5b] - activable => nextflow.secret.LocalSecretsProvider@6ab4a5b
-Apr-22 11:49:08.895 [main] DEBUG nextflow.Session - Session UUID: 6459a25b-1dfb-429a-9933-9a89dc719256
-Apr-22 11:49:08.896 [main] DEBUG nextflow.Session - Run name: extravagant_nobel
-Apr-22 11:49:08.896 [main] DEBUG nextflow.Session - Executor pool size: 8
-Apr-22 11:49:08.901 [main] DEBUG nextflow.util.ThreadPoolBuilder - Creating thread pool 'FileTransfer' minSize=10; maxSize=24; workQueue=LinkedBlockingQueue[10000]; allowCoreThreadTimeout=false
-Apr-22 11:49:08.931 [main] DEBUG nextflow.cli.CmdRun - 
+Apr-22 14:46:38.061 [main] DEBUG nextflow.cli.Launcher - $> nextflow run main.nf --help
+Apr-22 14:46:38.139 [main] INFO  nextflow.cli.CmdRun - N E X T F L O W  ~  version 22.10.7
+Apr-22 14:46:38.154 [main] DEBUG nextflow.plugin.PluginsFacade - Setting up plugin manager > mode=prod; embedded=false; plugins-dir=/Users/se13/.nextflow/plugins; core-plugins: nf-amazon@1.11.4,nf-azure@0.14.2,nf-codecommit@0.1.2,nf-console@1.0.4,nf-ga4gh@1.0.4,nf-google@1.4.5,nf-tower@1.5.6,nf-wave@0.5.4
+Apr-22 14:46:38.160 [main] INFO  org.pf4j.DefaultPluginStatusProvider - Enabled plugins: []
+Apr-22 14:46:38.161 [main] INFO  org.pf4j.DefaultPluginStatusProvider - Disabled plugins: []
+Apr-22 14:46:38.163 [main] INFO  org.pf4j.DefaultPluginManager - PF4J version 3.4.1 in 'deployment' mode
+Apr-22 14:46:38.171 [main] INFO  org.pf4j.AbstractPluginManager - No plugins
+Apr-22 14:46:38.186 [main] DEBUG nextflow.config.ConfigBuilder - Found config local: /Users/se13/workspace/projects/pipelines/var_call/nextflow.config
+Apr-22 14:46:38.187 [main] DEBUG nextflow.config.ConfigBuilder - Parsing config file: /Users/se13/workspace/projects/pipelines/var_call/nextflow.config
+Apr-22 14:46:38.211 [main] DEBUG nextflow.config.ConfigBuilder - Applying config profile: `standard`
+Apr-22 14:46:39.008 [main] DEBUG nextflow.cli.CmdRun - Applied DSL=2 from script declararion
+Apr-22 14:46:39.034 [main] INFO  nextflow.cli.CmdRun - Launching `main.nf` [thirsty_cori] DSL2 - revision: becb241c3f
+Apr-22 14:46:39.034 [main] DEBUG nextflow.plugin.PluginsFacade - Plugins default=[]
+Apr-22 14:46:39.034 [main] DEBUG nextflow.plugin.PluginsFacade - Plugins resolved requirement=[]
+Apr-22 14:46:39.049 [main] DEBUG nextflow.secret.LocalSecretsProvider - Secrets store: /Users/se13/.nextflow/secrets/store.json
+Apr-22 14:46:39.051 [main] DEBUG nextflow.secret.SecretsLoader - Discovered secrets providers: [nextflow.secret.LocalSecretsProvider@67064bdc] - activable => nextflow.secret.LocalSecretsProvider@67064bdc
+Apr-22 14:46:39.135 [main] DEBUG nextflow.Session - Session UUID: 4228cad7-e2b9-4fe0-866c-5e600f67c462
+Apr-22 14:46:39.135 [main] DEBUG nextflow.Session - Run name: thirsty_cori
+Apr-22 14:46:39.135 [main] DEBUG nextflow.Session - Executor pool size: 8
+Apr-22 14:46:39.151 [main] DEBUG nextflow.util.ThreadPoolBuilder - Creating thread pool 'FileTransfer' minSize=10; maxSize=24; workQueue=LinkedBlockingQueue[10000]; allowCoreThreadTimeout=false
+Apr-22 14:46:39.245 [main] DEBUG nextflow.cli.CmdRun - 
   Version: 22.10.7 build 5853
   Created: 18-02-2023 20:32 UTC (20:32 BST)
   System: Mac OS X 26.4
   Runtime: Groovy 3.0.13 on Java HotSpot(TM) 64-Bit Server VM 17.0.6+9-LTS-190
   Encoding: UTF-8 (UTF-8)
-  Process: 98145@mib117530s [172.20.241.6]
-  CPUs: 8 - Mem: 16 GB (91.6 MB) - Swap: 3 GB (1.3 GB)
-Apr-22 11:49:08.948 [main] DEBUG nextflow.Session - Work-dir: /Users/se13/workspace/projects/pipelines/var_call/work [Mac OS X]
-Apr-22 11:49:08.962 [main] DEBUG nextflow.executor.ExecutorFactory - Extension executors providers=[]
-Apr-22 11:49:08.967 [main] DEBUG nextflow.Session - Observer factory: DefaultObserverFactory
-Apr-22 11:49:09.009 [main] DEBUG nextflow.cache.CacheFactory - Using Nextflow cache factory: nextflow.cache.DefaultCacheFactory
-Apr-22 11:49:09.015 [main] DEBUG nextflow.util.CustomThreadPool - Creating default thread pool > poolSize: 9; maxThreads: 1000
-Apr-22 11:49:09.078 [main] DEBUG nextflow.Session - Session start
-Apr-22 11:49:09.081 [main] DEBUG nextflow.trace.TraceFileObserver - Workflow started -- trace file: /Users/se13/workspace/projects/pipelines/var_call/data/results/var_call/allacma_fusca_lowmax/pipeline_info/execution_trace.txt
-Apr-22 11:49:09.312 [main] DEBUG nextflow.script.ScriptRunner - > Launching execution
-Apr-22 11:49:10.009 [main] INFO  nextflow.Nextflow - 
-V A R   C A L L
-============================
-analysis_mode : paired
-genome        : /Users/se13/workspace/projects/pipelines/var_call/data/genomes/GCA_947179485.1_qeAllFusc8.1_genomic.simple_header.earlgrey_masked.fna
-input         : N/A
-reads         : /Users/se13/workspace/projects/pipelines/var_call/data/raw_data/reseq/raw_reads/*/*.{1,2}.fq.gz
-bams          : N/A
-repeat_bed    : /Users/se13/workspace/projects/pipelines/var_call/data/genomes/afusca_repeats/allacmaFusca.filteredRepeats.bed
-outdir        : /Users/se13/workspace/projects/pipelines/var_call/data/results/var_call/allacma_fusca_lowmax/
-species       : allacma_fusca
-dataset_id    : N/A
-run_label     : allacma_fusca
-skip_trimming : false
+  Process: 51445@mib117530s [172.20.241.6]
+  CPUs: 8 - Mem: 16 GB (76.9 MB) - Swap: 3 GB (1.3 GB)
+Apr-22 14:46:39.322 [main] DEBUG nextflow.Session - Work-dir: /Users/se13/workspace/projects/pipelines/var_call/work [Mac OS X]
+Apr-22 14:46:39.338 [main] DEBUG nextflow.executor.ExecutorFactory - Extension executors providers=[]
+Apr-22 14:46:39.350 [main] DEBUG nextflow.Session - Observer factory: DefaultObserverFactory
+Apr-22 14:46:39.393 [main] DEBUG nextflow.cache.CacheFactory - Using Nextflow cache factory: nextflow.cache.DefaultCacheFactory
+Apr-22 14:46:39.405 [main] DEBUG nextflow.util.CustomThreadPool - Creating default thread pool > poolSize: 9; maxThreads: 1000
+Apr-22 14:46:39.478 [main] DEBUG nextflow.Session - Session start
+Apr-22 14:46:39.484 [main] DEBUG nextflow.trace.TraceFileObserver - Workflow started -- trace file: /Users/se13/workspace/projects/pipelines/var_call/results/pipeline_info/execution_trace.txt
+Apr-22 14:46:39.823 [main] DEBUG nextflow.script.ScriptRunner - > Launching execution
+Apr-22 14:46:41.339 [main] INFO  nextflow.Nextflow - 
+nf-core style learning pipeline: var_call
 
-Apr-22 11:49:10.117 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: lsf
-Apr-22 11:49:10.118 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'lsf'
-Apr-22 11:49:10.124 [main] DEBUG nextflow.executor.Executor - [warm up] executor > lsf
-Apr-22 11:49:10.131 [main] DEBUG n.processor.TaskPollingMonitor - Creating task monitor for executor 'lsf' > capacity: 100; pollInterval: 5s; dumpInterval: 5m 
-Apr-22 11:49:10.134 [main] DEBUG n.executor.AbstractGridExecutor - Creating executor 'lsf' > queue-stat-interval: 1m
-Apr-22 11:49:10.237 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: lsf
-Apr-22 11:49:10.237 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'lsf'
-Apr-22 11:49:10.251 [main] DEBUG nextflow.script.ProcessConfig - Config settings `withName:TRIM_READS` matches process VAR_CALL_PAIRED:TRIM_READS
-Apr-22 11:49:10.253 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: lsf
-Apr-22 11:49:10.253 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'lsf'
-Apr-22 11:49:10.259 [main] DEBUG nextflow.script.ProcessConfig - Config settings `withName:BWA_MEM` matches process VAR_CALL_PAIRED:BWA_MEM
-Apr-22 11:49:10.262 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: lsf
-Apr-22 11:49:10.262 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'lsf'
-Apr-22 11:49:10.265 [main] DEBUG nextflow.script.ProcessConfig - Config settings `withName:ADD_RGS|SORT_BAM_SAMBAMBA` matches process VAR_CALL_PAIRED:SORT_BAM_SAMBAMBA
-Apr-22 11:49:10.265 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: lsf
-Apr-22 11:49:10.265 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'lsf'
-Apr-22 11:49:10.271 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: lsf
-Apr-22 11:49:10.271 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'lsf'
-Apr-22 11:49:10.274 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: lsf
-Apr-22 11:49:10.274 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'lsf'
-Apr-22 11:49:10.284 [main] DEBUG nextflow.script.ProcessConfig - Config settings `withName:MOSDEPTH_CALLABLE` matches process VAR_CALL_PAIRED:MOSDEPTH_CALLABLE
-Apr-22 11:49:10.285 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: lsf
-Apr-22 11:49:10.286 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'lsf'
-Apr-22 11:49:10.293 [main] DEBUG nextflow.script.ProcessConfig - Config settings `withName:INTERSECT_BEDS|INTERSECT_BED|GENERATE_FAIL_BED|BEDTOOLS_SUBTRACT` matches process VAR_CALL_PAIRED:INTERSECT_BEDS
-Apr-22 11:49:10.293 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: lsf
-Apr-22 11:49:10.293 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'lsf'
-Apr-22 11:49:10.299 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: lsf
-Apr-22 11:49:10.299 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'lsf'
-Apr-22 11:49:10.304 [main] DEBUG nextflow.script.ProcessConfig - Config settings `withName:FREEBAYES` matches process VAR_CALL_PAIRED:FREEBAYES
-Apr-22 11:49:10.304 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: lsf
-Apr-22 11:49:10.304 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'lsf'
-Apr-22 11:49:10.306 [main] DEBUG nextflow.script.ProcessConfig - Config settings `withName:BCFTOOLS_FILTER|BCFTOOLS_SORT|BCFTOOLS_INDEX` matches process VAR_CALL_PAIRED:BCFTOOLS_FILTER
-Apr-22 11:49:10.306 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: lsf
-Apr-22 11:49:10.306 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'lsf'
-Apr-22 11:49:10.311 [main] DEBUG nextflow.script.ProcessConfig - Config settings `withName:INTERSECT_BEDS|INTERSECT_BED|GENERATE_FAIL_BED|BEDTOOLS_SUBTRACT` matches process VAR_CALL_PAIRED:GENERATE_FAIL_BED
-Apr-22 11:49:10.312 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: lsf
-Apr-22 11:49:10.312 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'lsf'
-Apr-22 11:49:10.317 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: lsf
-Apr-22 11:49:10.317 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'lsf'
-Apr-22 11:49:10.322 [main] DEBUG nextflow.script.ProcessConfig - Config settings `withName:INTERSECT_BEDS|INTERSECT_BED|GENERATE_FAIL_BED|BEDTOOLS_SUBTRACT` matches process VAR_CALL_PAIRED:BEDTOOLS_SUBTRACT
-Apr-22 11:49:10.322 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: lsf
-Apr-22 11:49:10.322 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'lsf'
-Apr-22 11:49:10.330 [main] DEBUG nextflow.script.ProcessConfig - Config settings `withName:BCFTOOLS_FILTER|BCFTOOLS_SORT|BCFTOOLS_INDEX` matches process VAR_CALL_PAIRED:BCFTOOLS_SORT
-Apr-22 11:49:10.330 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: lsf
-Apr-22 11:49:10.330 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'lsf'
-Apr-22 11:49:10.336 [main] DEBUG nextflow.script.ProcessConfig - Config settings `withName:BCFTOOLS_FILTER|BCFTOOLS_SORT|BCFTOOLS_INDEX` matches process VAR_CALL_PAIRED:BCFTOOLS_INDEX
-Apr-22 11:49:10.338 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: lsf
-Apr-22 11:49:10.338 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'lsf'
-Apr-22 11:49:10.343 [main] DEBUG nextflow.Session - Workflow process names [dsl2]: VAR_CALL_PAIRED:GENERATE_FAIL_BED, GENERATE_PASS_VCF, VAR_CALL_PAIRED:INDEX_BAM_SAMBAMBA, VAR_CALL_PAIRED:BWA_MEM, BCFTOOLS_INDEX, BWA_MEM_SE, MARK_DUPES_SAMBAMBA, INTERSECT_BED, VAR_CALL_PAIRED:GENERATE_PASS_VCF, BWA_MEM, VAR_CALL_PAIRED:TRIM_READS, VAR_CALL_PAIRED:BCFTOOLS_FILTER, INTERSECT_BEDS_NO_REPEATS, INTERSECT_BED_NO_REPEATS, FREEBAYES, TRIM_READS, BWA_INDEX, GENERATE_FAIL_BED, VAR_CALL_PAIRED:SAMBAMBA_MERGE, VAR_CALL_PAIRED:BWA_INDEX, SAMTOOLS_FAIDX, VAR_CALL_PAIRED:BEDTOOLS_SUBTRACT, VAR_CALL_PAIRED:FREEBAYES, VAR_CALL_PAIRED:BCFTOOLS_SORT, INTERSECT_BEDS, VAR_CALL_PAIRED:MARK_DUPES_SAMBAMBA, BEDTOOLS_SUBTRACT, BCFTOOLS_SORT, VAR_CALL_PAIRED:INTERSECT_BEDS, ADD_RGS, VAR_CALL_PAIRED:SAMTOOLS_FAIDX, SAMBAMBA_MERGE, MOSDEPTH_CALLABLE, VAR_CALL_PAIRED:SORT_BAM_SAMBAMBA, BCFTOOLS_FILTER, VAR_CALL_PAIRED:MOSDEPTH_CALLABLE, SORT_BAM_SAMBAMBA, VAR_CALL_PAIRED:BCFTOOLS_INDEX, INDEX_BAM_SAMBAMBA
-Apr-22 11:49:10.352 [main] DEBUG nextflow.trace.WorkflowStatsObserver - Workflow completed > WorkflowStats[succeededCount=0; failedCount=0; ignoredCount=0; cachedCount=0; pendingCount=0; submittedCount=0; runningCount=0; retriesCount=0; abortedCount=0; succeedDuration=0ms; failedDuration=0ms; cachedDuration=0ms;loadCpus=0; loadMemory=0; peakRunning=0; peakCpus=0; peakMemory=0; ]
-Apr-22 11:49:10.353 [main] DEBUG nextflow.trace.TraceFileObserver - Workflow completed -- saving trace file
-Apr-22 11:49:10.354 [main] DEBUG nextflow.trace.ReportObserver - Workflow completed -- rendering execution report
-Apr-22 11:49:10.357 [main] DEBUG nextflow.trace.ReportObserver - Execution report summary data:
-  []
-Apr-22 11:49:11.293 [main] DEBUG nextflow.trace.TimelineObserver - Workflow completed -- rendering execution timeline
-Apr-22 11:49:20.462 [main] DEBUG nextflow.cache.CacheDB - Closing CacheDB done
-Apr-22 11:49:20.500 [main] DEBUG nextflow.util.ThreadPoolManager - Thread pool 'FileTransfer' shutdown completed (hard=false)
-Apr-22 11:49:20.500 [main] DEBUG nextflow.script.ScriptRunner - > Execution complete -- Goodbye
+Usage:
+  nextflow run main.nf --analysis_mode paired --input samplesheet.csv --genome genome.fa --outdir results --species my_species --dataset_id my_run
+
+Cluster example (Conda):
+  nextflow run main.nf -profile conda,lsf -params-file params/afusca_params.json -work-dir data/workdir/var_call -resume
+
+Cluster example (Apptainer):
+  nextflow run main.nf -profile apptainer,lsf -params-file params/afusca_params.json --apptainer_container /path/to/var_call.sif -work-dir data/workdir/var_call -resume
+
+Required parameters:
+  --analysis_mode         One of: paired, single_end, bams
+  --genome                Reference genome FASTA
+  --outdir                Output directory
+  --species               Dataset-wide species label
+
+Mode-specific parameters:
+  --input                 CSV samplesheet for FASTQ-based modes
+  --reads                 Legacy FASTQ glob for paired / single_end
+  --bams                  Input BAM glob for bams mode
+  --repeat_bed            Optional BED of repeat regions to exclude
+  --dataset_id            Optional dataset/run label used for merged outputs
+  --apptainer_container   Path to a .sif image when using -profile apptainer
+  --apptainer_cache_dir   Optional cache directory for Apptainer/Singularity pulls and metadata
+Useful flags:
+  --skip_trimming         Skip fastp in paired-read workflows
+  --help                  Show this help message
+
+Notes:
+  The same input mode now handles one or many samples of that input type.
+  Use -params-file for dataset-specific run settings.
+  Use -work-dir to place the Nextflow working directory on cluster scratch or project storage.
+  The pipeline generates the FASTA index (.fai) internally with samtools faidx.
+  The pipeline sets MOSDEPTH_Q0-3 automatically for the mosdepth process.
+  If you use -profile apptainer, provide --apptainer_container unless it is set in config.
+

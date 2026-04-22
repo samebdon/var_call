@@ -1,156 +1,74 @@
-Apr-22 11:48:12.703 [main] DEBUG nextflow.cli.Launcher - $> nextflow run main.nf -profile conda,lsf -params-file params/afusca_params.json -preview
-Apr-22 11:48:12.763 [main] INFO  nextflow.cli.CmdRun - N E X T F L O W  ~  version 22.10.7
-Apr-22 11:48:12.778 [main] DEBUG nextflow.plugin.PluginsFacade - Setting up plugin manager > mode=prod; embedded=false; plugins-dir=/Users/se13/.nextflow/plugins; core-plugins: nf-amazon@1.11.4,nf-azure@0.14.2,nf-codecommit@0.1.2,nf-console@1.0.4,nf-ga4gh@1.0.4,nf-google@1.4.5,nf-tower@1.5.6,nf-wave@0.5.4
-Apr-22 11:48:12.785 [main] INFO  org.pf4j.DefaultPluginStatusProvider - Enabled plugins: []
-Apr-22 11:48:12.786 [main] INFO  org.pf4j.DefaultPluginStatusProvider - Disabled plugins: []
-Apr-22 11:48:12.787 [main] INFO  org.pf4j.DefaultPluginManager - PF4J version 3.4.1 in 'deployment' mode
-Apr-22 11:48:12.794 [main] INFO  org.pf4j.AbstractPluginManager - No plugins
-Apr-22 11:48:12.806 [main] DEBUG nextflow.config.ConfigBuilder - Found config local: /Users/se13/workspace/projects/pipelines/var_call/nextflow.config
-Apr-22 11:48:12.807 [main] DEBUG nextflow.config.ConfigBuilder - Parsing config file: /Users/se13/workspace/projects/pipelines/var_call/nextflow.config
-Apr-22 11:48:12.835 [main] DEBUG nextflow.config.ConfigBuilder - Applying config profile: `conda,lsf`
-Apr-22 11:48:13.399 [main] DEBUG nextflow.config.ConfigBuilder - Available config profiles: [standard, test, conda, lsf]
-Apr-22 11:48:13.416 [main] DEBUG nextflow.cli.CmdRun - Applied DSL=2 from script declararion
-Apr-22 11:48:13.428 [main] INFO  nextflow.cli.CmdRun - * PREVIEW * null [nauseous_poitras] DSL2 - revision: cf6c4852f6
-Apr-22 11:48:13.429 [main] DEBUG nextflow.plugin.PluginsFacade - Plugins default=[]
-Apr-22 11:48:13.429 [main] DEBUG nextflow.plugin.PluginsFacade - Plugins resolved requirement=[]
-Apr-22 11:48:13.434 [main] DEBUG nextflow.secret.LocalSecretsProvider - Secrets store: /Users/se13/.nextflow/secrets/store.json
-Apr-22 11:48:13.436 [main] DEBUG nextflow.secret.SecretsLoader - Discovered secrets providers: [nextflow.secret.LocalSecretsProvider@6ab4a5b] - activable => nextflow.secret.LocalSecretsProvider@6ab4a5b
-Apr-22 11:48:13.468 [main] DEBUG nextflow.Session - Session UUID: a8e88895-a662-4883-b6bc-d0f2f9829c70
-Apr-22 11:48:13.469 [main] DEBUG nextflow.Session - Run name: nauseous_poitras
-Apr-22 11:48:13.469 [main] DEBUG nextflow.Session - Executor pool size: 8
-Apr-22 11:48:13.475 [main] DEBUG nextflow.util.ThreadPoolBuilder - Creating thread pool 'FileTransfer' minSize=10; maxSize=24; workQueue=LinkedBlockingQueue[10000]; allowCoreThreadTimeout=false
-Apr-22 11:48:13.492 [main] DEBUG nextflow.cli.CmdRun - 
+Apr-22 14:26:58.261 [main] DEBUG nextflow.cli.Launcher - $> nextflow run main.nf -profile apptainer,lsf --help --apptainer_container /tmp/var_call.sif
+Apr-22 14:26:58.315 [main] INFO  nextflow.cli.CmdRun - N E X T F L O W  ~  version 22.10.7
+Apr-22 14:26:58.332 [main] DEBUG nextflow.plugin.PluginsFacade - Setting up plugin manager > mode=prod; embedded=false; plugins-dir=/Users/se13/.nextflow/plugins; core-plugins: nf-amazon@1.11.4,nf-azure@0.14.2,nf-codecommit@0.1.2,nf-console@1.0.4,nf-ga4gh@1.0.4,nf-google@1.4.5,nf-tower@1.5.6,nf-wave@0.5.4
+Apr-22 14:26:58.339 [main] INFO  org.pf4j.DefaultPluginStatusProvider - Enabled plugins: []
+Apr-22 14:26:58.340 [main] INFO  org.pf4j.DefaultPluginStatusProvider - Disabled plugins: []
+Apr-22 14:26:58.342 [main] INFO  org.pf4j.DefaultPluginManager - PF4J version 3.4.1 in 'deployment' mode
+Apr-22 14:26:58.349 [main] INFO  org.pf4j.AbstractPluginManager - No plugins
+Apr-22 14:26:58.360 [main] DEBUG nextflow.config.ConfigBuilder - Found config local: /Users/se13/workspace/projects/pipelines/var_call/nextflow.config
+Apr-22 14:26:58.361 [main] DEBUG nextflow.config.ConfigBuilder - Parsing config file: /Users/se13/workspace/projects/pipelines/var_call/nextflow.config
+Apr-22 14:26:58.378 [main] DEBUG nextflow.config.ConfigBuilder - Applying config profile: `apptainer,lsf`
+Apr-22 14:26:58.852 [main] DEBUG nextflow.config.ConfigBuilder - Available config profiles: [standard, test, apptainer, conda, lsf]
+Apr-22 14:26:58.870 [main] DEBUG nextflow.cli.CmdRun - Applied DSL=2 from script declararion
+Apr-22 14:26:58.882 [main] INFO  nextflow.cli.CmdRun - Launching `main.nf` [modest_hopper] DSL2 - revision: 7aaa75a232
+Apr-22 14:26:58.884 [main] DEBUG nextflow.plugin.PluginsFacade - Plugins default=[]
+Apr-22 14:26:58.884 [main] DEBUG nextflow.plugin.PluginsFacade - Plugins resolved requirement=[]
+Apr-22 14:26:58.890 [main] DEBUG nextflow.secret.LocalSecretsProvider - Secrets store: /Users/se13/.nextflow/secrets/store.json
+Apr-22 14:26:58.892 [main] DEBUG nextflow.secret.SecretsLoader - Discovered secrets providers: [nextflow.secret.LocalSecretsProvider@a4b5ce3] - activable => nextflow.secret.LocalSecretsProvider@a4b5ce3
+Apr-22 14:26:58.933 [main] DEBUG nextflow.Session - Session UUID: ba46f171-4efa-47c3-a92d-b61b9ecf03c6
+Apr-22 14:26:58.933 [main] DEBUG nextflow.Session - Run name: modest_hopper
+Apr-22 14:26:58.933 [main] DEBUG nextflow.Session - Executor pool size: 8
+Apr-22 14:26:58.940 [main] DEBUG nextflow.util.ThreadPoolBuilder - Creating thread pool 'FileTransfer' minSize=10; maxSize=24; workQueue=LinkedBlockingQueue[10000]; allowCoreThreadTimeout=false
+Apr-22 14:26:58.986 [main] DEBUG nextflow.cli.CmdRun - 
   Version: 22.10.7 build 5853
   Created: 18-02-2023 20:32 UTC (20:32 BST)
   System: Mac OS X 26.4
   Runtime: Groovy 3.0.13 on Java HotSpot(TM) 64-Bit Server VM 17.0.6+9-LTS-190
   Encoding: UTF-8 (UTF-8)
-  Process: 97866@mib117530s [172.20.241.6]
-  CPUs: 8 - Mem: 16 GB (532.6 MB) - Swap: 3 GB (1.3 GB)
-Apr-22 11:48:13.500 [main] DEBUG nextflow.Session - Work-dir: /Users/se13/workspace/projects/pipelines/var_call/work [Mac OS X]
-Apr-22 11:48:13.511 [main] DEBUG nextflow.executor.ExecutorFactory - Extension executors providers=[]
-Apr-22 11:48:13.517 [main] DEBUG nextflow.Session - Observer factory: DefaultObserverFactory
-Apr-22 11:48:13.543 [main] DEBUG nextflow.cache.CacheFactory - Using Nextflow cache factory: nextflow.cache.DefaultCacheFactory
-Apr-22 11:48:13.548 [main] DEBUG nextflow.util.CustomThreadPool - Creating default thread pool > poolSize: 9; maxThreads: 1000
-Apr-22 11:48:13.585 [main] DEBUG nextflow.Session - Session start
-Apr-22 11:48:13.588 [main] DEBUG nextflow.trace.TraceFileObserver - Workflow started -- trace file: /Users/se13/workspace/projects/pipelines/var_call/data/results/var_call/allacma_fusca_lowmax/pipeline_info/execution_trace.txt
-Apr-22 11:48:13.782 [main] DEBUG nextflow.script.ScriptRunner - > Launching execution
-Apr-22 11:48:14.339 [main] INFO  nextflow.Nextflow - 
-V A R   C A L L
-============================
-analysis_mode : paired
-genome        : /Users/se13/workspace/projects/pipelines/var_call/data/genomes/GCA_947179485.1_qeAllFusc8.1_genomic.simple_header.earlgrey_masked.fna
-input         : N/A
-reads         : /Users/se13/workspace/projects/pipelines/var_call/data/raw_data/reseq/raw_reads/*/*.{1,2}.fq.gz
-bams          : N/A
-repeat_bed    : /Users/se13/workspace/projects/pipelines/var_call/data/genomes/afusca_repeats/allacmaFusca.filteredRepeats.bed
-outdir        : /Users/se13/workspace/projects/pipelines/var_call/data/results/var_call/allacma_fusca_lowmax/
-species       : allacma_fusca
-dataset_id    : N/A
-run_label     : allacma_fusca
-skip_trimming : false
+  Process: 43463@mib117530s [172.20.241.6]
+  CPUs: 8 - Mem: 16 GB (85.4 MB) - Swap: 3 GB (1.3 GB)
+Apr-22 14:26:58.994 [main] DEBUG nextflow.Session - Work-dir: /Users/se13/workspace/projects/pipelines/var_call/work [Mac OS X]
+Apr-22 14:26:59.006 [main] DEBUG nextflow.executor.ExecutorFactory - Extension executors providers=[]
+Apr-22 14:26:59.013 [main] DEBUG nextflow.Session - Observer factory: DefaultObserverFactory
+Apr-22 14:26:59.046 [main] DEBUG nextflow.cache.CacheFactory - Using Nextflow cache factory: nextflow.cache.DefaultCacheFactory
+Apr-22 14:26:59.054 [main] DEBUG nextflow.util.CustomThreadPool - Creating default thread pool > poolSize: 9; maxThreads: 1000
+Apr-22 14:26:59.109 [main] DEBUG nextflow.Session - Session start
+Apr-22 14:26:59.112 [main] DEBUG nextflow.trace.TraceFileObserver - Workflow started -- trace file: /Users/se13/workspace/projects/pipelines/var_call/results/pipeline_info/execution_trace.txt
+Apr-22 14:26:59.305 [main] DEBUG nextflow.script.ScriptRunner - > Launching execution
+Apr-22 14:27:00.081 [main] INFO  nextflow.Nextflow - 
+nf-core style learning pipeline: var_call
 
-Apr-22 11:48:14.415 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: lsf
-Apr-22 11:48:14.415 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'lsf'
-Apr-22 11:48:14.421 [main] DEBUG nextflow.executor.Executor - [warm up] executor > lsf
-Apr-22 11:48:14.424 [main] DEBUG n.processor.TaskPollingMonitor - Creating task monitor for executor 'lsf' > capacity: 100; pollInterval: 5s; dumpInterval: 5m 
-Apr-22 11:48:14.427 [main] DEBUG n.executor.AbstractGridExecutor - Creating executor 'lsf' > queue-stat-interval: 1m
-Apr-22 11:48:14.468 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: lsf
-Apr-22 11:48:14.468 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'lsf'
-Apr-22 11:48:14.480 [main] DEBUG nextflow.script.ProcessConfig - Config settings `withName:TRIM_READS` matches process VAR_CALL_PAIRED:TRIM_READS
-Apr-22 11:48:14.482 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: lsf
-Apr-22 11:48:14.482 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'lsf'
-Apr-22 11:48:14.486 [main] DEBUG nextflow.script.ProcessConfig - Config settings `withName:BWA_MEM` matches process VAR_CALL_PAIRED:BWA_MEM
-Apr-22 11:48:14.487 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: lsf
-Apr-22 11:48:14.487 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'lsf'
-Apr-22 11:48:14.490 [main] DEBUG nextflow.script.ProcessConfig - Config settings `withName:ADD_RGS|SORT_BAM_SAMBAMBA` matches process VAR_CALL_PAIRED:SORT_BAM_SAMBAMBA
-Apr-22 11:48:14.490 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: lsf
-Apr-22 11:48:14.490 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'lsf'
-Apr-22 11:48:14.495 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: lsf
-Apr-22 11:48:14.495 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'lsf'
-Apr-22 11:48:14.498 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: lsf
-Apr-22 11:48:14.498 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'lsf'
-Apr-22 11:48:14.507 [main] DEBUG nextflow.script.ProcessConfig - Config settings `withName:MOSDEPTH_CALLABLE` matches process VAR_CALL_PAIRED:MOSDEPTH_CALLABLE
-Apr-22 11:48:14.508 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: lsf
-Apr-22 11:48:14.508 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'lsf'
-Apr-22 11:48:14.515 [main] DEBUG nextflow.script.ProcessConfig - Config settings `withName:INTERSECT_BEDS|INTERSECT_BED|GENERATE_FAIL_BED|BEDTOOLS_SUBTRACT` matches process VAR_CALL_PAIRED:INTERSECT_BEDS
-Apr-22 11:48:14.516 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: lsf
-Apr-22 11:48:14.516 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'lsf'
-Apr-22 11:48:14.520 [main] DEBUG nextflow.Session - Session aborted -- Cause: Access to 'INTERSECT_BEDS.out' is undefined since the process 'INTERSECT_BEDS' has not been invoked before accessing the output attribute
-Apr-22 11:48:14.529 [main] DEBUG nextflow.Session - The following nodes are still active:
-  [operator] join
-  [operator] collect
+Usage:
+  nextflow run main.nf --analysis_mode paired --input samplesheet.csv --genome genome.fa --outdir results --species my_species --dataset_id my_run
 
-Apr-22 11:48:14.533 [main] ERROR nextflow.cli.Launcher - Access to 'INTERSECT_BEDS.out' is undefined since the process 'INTERSECT_BEDS' has not been invoked before accessing the output attribute
-nextflow.exception.ScriptRuntimeException: Access to 'INTERSECT_BEDS.out' is undefined since the process 'INTERSECT_BEDS' has not been invoked before accessing the output attribute
-	at nextflow.script.ProcessDef.getOut(ProcessDef.groovy:153)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
-	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
-	at org.codehaus.groovy.reflection.CachedMethod.invoke(CachedMethod.java:107)
-	at groovy.lang.MetaMethod.doMethodInvoke(MetaMethod.java:323)
-	at org.codehaus.groovy.runtime.metaclass.MethodMetaProperty$GetBeanMethodMetaProperty.getProperty(MethodMetaProperty.java:76)
-	at org.codehaus.groovy.runtime.callsite.GetEffectivePogoPropertySite.getProperty(GetEffectivePogoPropertySite.java:85)
-	at org.codehaus.groovy.runtime.callsite.AbstractCallSite.callGetProperty(AbstractCallSite.java:329)
-	at Script_5a83d303.selectMultiSampleCallableBeds(Script_5a83d303:29)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
-	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
-	at nextflow.script.FunctionDef.invoke_a(FunctionDef.groovy:65)
-	at nextflow.script.ComponentDef.invoke_o(ComponentDef.groovy:41)
-	at nextflow.script.WorkflowBinding.invokeMethod(WorkflowBinding.groovy:94)
-	at org.codehaus.groovy.runtime.metaclass.ClosureMetaClass.invokeOnDelegationObjects(ClosureMetaClass.java:408)
-	at org.codehaus.groovy.runtime.metaclass.ClosureMetaClass.invokeMethod(ClosureMetaClass.java:350)
-	at org.codehaus.groovy.runtime.callsite.PogoMetaClassSite.callCurrent(PogoMetaClassSite.java:61)
-	at org.codehaus.groovy.runtime.callsite.CallSiteArray.defaultCallCurrent(CallSiteArray.java:51)
-	at org.codehaus.groovy.runtime.callsite.AbstractCallSite.callCurrent(AbstractCallSite.java:171)
-	at org.codehaus.groovy.runtime.callsite.AbstractCallSite.callCurrent(AbstractCallSite.java:212)
-	at Script_5a83d303$_runScript_closure1$_closure5.doCall(Script_5a83d303:69)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
-	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
-	at org.codehaus.groovy.reflection.CachedMethod.invoke(CachedMethod.java:107)
-	at groovy.lang.MetaMethod.doMethodInvoke(MetaMethod.java:323)
-	at org.codehaus.groovy.runtime.metaclass.ClosureMetaClass.invokeMethod(ClosureMetaClass.java:274)
-	at groovy.lang.MetaClassImpl.invokeMethod(MetaClassImpl.java:1035)
-	at groovy.lang.Closure.call(Closure.java:412)
-	at groovy.lang.Closure.call(Closure.java:406)
-	at nextflow.script.WorkflowDef.run0(WorkflowDef.groovy:205)
-	at nextflow.script.WorkflowDef.run(WorkflowDef.groovy:189)
-	at nextflow.script.BindableDef.invoke_a(BindableDef.groovy:52)
-	at nextflow.script.ComponentDef.invoke_o(ComponentDef.groovy:41)
-	at nextflow.script.WorkflowBinding.invokeMethod(WorkflowBinding.groovy:94)
-	at org.codehaus.groovy.runtime.metaclass.ClosureMetaClass.invokeOnDelegationObjects(ClosureMetaClass.java:408)
-	at org.codehaus.groovy.runtime.metaclass.ClosureMetaClass.invokeMethod(ClosureMetaClass.java:350)
-	at org.codehaus.groovy.runtime.callsite.PogoMetaClassSite.callCurrent(PogoMetaClassSite.java:61)
-	at org.codehaus.groovy.runtime.callsite.CallSiteArray.defaultCallCurrent(CallSiteArray.java:51)
-	at org.codehaus.groovy.runtime.callsite.AbstractCallSite.callCurrent(AbstractCallSite.java:171)
-	at Script_367b140b$_runScript_closure4$_closure5.doCall(Script_367b140b:124)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
-	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
-	at org.codehaus.groovy.reflection.CachedMethod.invoke(CachedMethod.java:107)
-	at groovy.lang.MetaMethod.doMethodInvoke(MetaMethod.java:323)
-	at org.codehaus.groovy.runtime.metaclass.ClosureMetaClass.invokeMethod(ClosureMetaClass.java:274)
-	at groovy.lang.MetaClassImpl.invokeMethod(MetaClassImpl.java:1035)
-	at groovy.lang.Closure.call(Closure.java:412)
-	at groovy.lang.Closure.call(Closure.java:406)
-	at nextflow.script.WorkflowDef.run0(WorkflowDef.groovy:205)
-	at nextflow.script.WorkflowDef.run(WorkflowDef.groovy:189)
-	at nextflow.script.BindableDef.invoke_a(BindableDef.groovy:52)
-	at nextflow.script.ChainableDef$invoke_a.call(Unknown Source)
-	at org.codehaus.groovy.runtime.callsite.CallSiteArray.defaultCall(CallSiteArray.java:47)
-	at org.codehaus.groovy.runtime.callsite.AbstractCallSite.call(AbstractCallSite.java:125)
-	at org.codehaus.groovy.runtime.callsite.AbstractCallSite.call(AbstractCallSite.java:139)
-	at nextflow.script.BaseScript.runDsl2(BaseScript.groovy:208)
-	at nextflow.script.BaseScript.run(BaseScript.groovy:217)
-	at nextflow.script.ScriptParser.runScript(ScriptParser.groovy:230)
-	at nextflow.script.ScriptRunner.run(ScriptRunner.groovy:225)
-	at nextflow.script.ScriptRunner.execute(ScriptRunner.groovy:131)
-	at nextflow.cli.CmdRun.run(CmdRun.groovy:354)
-	at nextflow.cli.Launcher.run(Launcher.groovy:487)
-	at nextflow.cli.Launcher.main(Launcher.groovy:646)
+Cluster example (Conda):
+  nextflow run main.nf -profile conda,lsf -params-file params/afusca_params.json -work-dir data/workdir/var_call -resume
+
+Cluster example (Apptainer):
+  nextflow run main.nf -profile apptainer,lsf -params-file params/afusca_params.json --apptainer_container /path/to/var_call.sif -work-dir data/workdir/var_call -resume
+
+Required parameters:
+  --analysis_mode         One of: paired, single_paired, single_end, bams
+  --genome                Reference genome FASTA
+  --outdir                Output directory
+  --species               Dataset-wide species label
+
+Mode-specific parameters:
+  --input                 CSV samplesheet for FASTQ-based modes
+  --reads                 Legacy FASTQ glob for paired / single_paired / single_end
+  --bams                  Input BAM glob for bams mode
+  --repeat_bed            Optional BED of repeat regions to exclude
+  --dataset_id            Optional dataset/run label used for merged outputs
+  --apptainer_container   Path to a .sif image when using -profile apptainer
+  --apptainer_cache_dir   Optional cache directory for Apptainer/Singularity pulls and metadata
+Useful flags:
+  --skip_trimming         Skip fastp in paired-read modes
+  --help                  Show this help message
+
+Notes:
+  Use -params-file for dataset-specific run settings.
+  Use -work-dir to place the Nextflow working directory on cluster scratch or project storage.
+  The pipeline generates the FASTA index (.fai) internally with samtools faidx.
+  The pipeline sets MOSDEPTH_Q0-3 automatically for the mosdepth process.
+  If you use -profile apptainer, provide --apptainer_container unless it is set in config.
+

@@ -14,7 +14,7 @@
         },
         "input": {
           "type": "string",
-          "description": "CSV samplesheet for FASTQ-based runs."
+          "description": "CSV or TSV samplesheet for paired-end, single-end, or BAM-based runs."
         },
         "reads": {
           "type": "string",
@@ -22,7 +22,7 @@
         },
         "bams": {
           "type": "string",
-          "description": "Glob path to BAM input files."
+          "description": "Glob path to BAM input files when not using a samplesheet."
         },
         "genome": {
           "type": "string",

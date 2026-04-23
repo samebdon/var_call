@@ -53,14 +53,7 @@ workflow VAR_CALL_BAMS {
     main:
     PREPARE_REFERENCE(genome)
 
-    bams
-        .map { bam ->
-            def prefix = bam.baseName.tokenize('.')[0]
-            [prefix, bam]
-        }
-        .set { bam_ch }
-
-    ADD_RGS(bam_ch)
+    ADD_RGS(bams)
     SORT_BAM_SAMBAMBA(ADD_RGS.out)
     MARK_DUPES_SAMBAMBA(SORT_BAM_SAMBAMBA.out)
     INDEX_BAM_SAMBAMBA(MARK_DUPES_SAMBAMBA.out.meta_bam)

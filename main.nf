@@ -46,8 +46,6 @@ def helpMessage() {
       --skip_trimming         Skip fastp in paired-read workflows
       --help                  Show this help message
 
-    Notes:
-      Advanced users can also use raw Nextflow -with-conda options directly.
     """.stripIndent()
 }
 

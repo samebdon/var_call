@@ -4,7 +4,7 @@ Freebayes variant-calling pipeline for paired-end reads, single-end reads, or BA
 
 ## Usage
 
-Glob-based FASTQ input:
+Glob FASTQ input:
 
 ```bash
 nextflow run main.nf   --analysis_mode paired   --reads 'data/*_{1,2}.fastq.gz'   --genome reference/genome.fa   --repeat_bed reference/repeats.bed   --species my_species   --outdir results
@@ -14,12 +14,6 @@ Paired-end reads from a CSV/TSV samplesheet:
 
 ```bash
 nextflow run main.nf   --analysis_mode paired   --input assets/samplesheet.csv   --genome reference/genome.fa   --species my_species   --dataset_id my_species_reseq_2026   --outdir results   -profile standard,conda
-```
-
-BAM input from a glob:
-
-```bash
-nextflow run main.nf   --analysis_mode bams   --bams 'data/*.bam'   --genome reference/genome.fa   --species my_species   --outdir results   -profile lsf,conda
 ```
 
 BAM input from a CSV/TSV samplesheet:
@@ -56,11 +50,9 @@ nextflow run main.nf   -profile apptainer,lsf   -params-file params/afusca_param
 
 - Use `--input` with [assets/samplesheet.csv](/Users/se13/workspace/projects/pipelines/var_call/assets/samplesheet.csv) for paired-end runs.
 - Use `--input` with [assets/samplesheet_single_end.csv](/Users/se13/workspace/projects/pipelines/var_call/assets/samplesheet_single_end.csv) for single-end runs.
-- Use `--input` with [assets/bam_samplesheet.csv](/Users/se13/workspace/projects/pipelines/var_call/assets/bam_samplesheet.csv) or [assets/bam_samplesheet.tsv](/Users/se13/workspace/projects/pipelines/var_call/assets/bam_samplesheet.tsv) for BAM mode.
-- `--reads` remains available as a simpler legacy option while you are still iterating on the pipeline.
+- Use `--input` with [assets/bam_samplesheet.csv](/Users/se13/workspace/projects/pipelines/var_call/assets/bam_samplesheet.csv) for BAM mode.
+- `--reads` or '--bams' can be pointed to directly instead of using an input table.
 - `--repeat_bed` is optional. If omitted, callable regions are generated without repeat subtraction.
-- In `bams` mode, `--bam_rg_mode preserve` is the default: existing RGs are kept, and RGs are only added when missing. Use `--bam_rg_mode overwrite` if you explicitly want to replace them.
-- The pipeline generates the reference FASTA index (`.fai`) internally with `samtools faidx`.
 - `MOSDEPTH_CALLABLE` also writes a per-sample `.callable_mb.txt` file giving callable BED size in megabases.
 
 ## Software distribution
@@ -78,8 +70,6 @@ nextflow run main.nf   -profile apptainer,lsf   -params-file params/afusca_param
 
 If you use `var_call`, please cite the software release.
 
-A starter citation file is provided in [CITATION.cff](/Users/se13/workspace/projects/pipelines/var_call/CITATION.cff). Once the repository is on GitHub and linked to Zenodo, update the repository URL and add the Zenodo DOI.
-
 Suggested format:
 
 ```text
@@ -89,9 +79,5 @@ Ebdon, S. (2026). var_call (v1.0.0) [Software]. GitHub/Zenodo.
 Please also cite Nextflow and major underlying tools such as Freebayes where appropriate.
 
 ## Notes
-
-- Head-job submission details such as `bsub` directives and `module load nextflow/...` are intentionally kept outside the pipeline.
-- `MOSDEPTH_Q0` to `MOSDEPTH_Q3` are set automatically for the `MOSDEPTH_CALLABLE` process.
-- The next step toward closer nf-core alignment would be converting reusable steps to official nf-core modules and adding `nf-test` or small test data.
 
 See [docs/output.md](/Users/se13/workspace/projects/pipelines/var_call/docs/output.md) for more detail.

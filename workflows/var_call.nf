@@ -53,7 +53,7 @@ workflow VAR_CALL_BAMS {
     main:
     PREPARE_REFERENCE(genome)
 
-    ADD_RGS(bams)
+    ADD_RGS(bams, params.bam_rg_mode)
     SORT_BAM_SAMBAMBA(ADD_RGS.out)
     MARK_DUPES_SAMBAMBA(SORT_BAM_SAMBAMBA.out)
     INDEX_BAM_SAMBAMBA(MARK_DUPES_SAMBAMBA.out.meta_bam)

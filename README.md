@@ -28,10 +28,16 @@ BAM input from a CSV/TSV samplesheet:
 nextflow run main.nf   --analysis_mode bams   --input assets/bam_samplesheet.csv   --genome reference/genome.fa   --species my_species   --outdir results   -profile lsf,conda
 ```
 
-Params-file cluster run with Conda:
+Params-file cluster run with Conda YAML:
 
 ```bash
 nextflow run main.nf   -profile conda,lsf   -params-file params/afusca_params.json   -work-dir data/workdir/var_call   -resume
+```
+
+Params-file cluster run with an existing Conda env:
+
+```bash
+nextflow run main.nf   -profile conda,lsf   -params-file params/afusca_params.json   --conda_env /path/to/existing/env   -work-dir data/workdir/var_call   -resume
 ```
 
 Params-file cluster run with Apptainer:
@@ -53,18 +59,16 @@ nextflow run main.nf   -profile apptainer,lsf   -params-file params/afusca_param
 - Use `--input` with [assets/bam_samplesheet.csv](/Users/se13/workspace/projects/pipelines/var_call/assets/bam_samplesheet.csv) or [assets/bam_samplesheet.tsv](/Users/se13/workspace/projects/pipelines/var_call/assets/bam_samplesheet.tsv) for BAM mode.
 - `--reads` remains available as a simpler legacy option while you are still iterating on the pipeline.
 - `--repeat_bed` is optional. If omitted, callable regions are generated without repeat subtraction.
+- In `bams` mode, `--bam_rg_mode preserve` is the default: existing RGs are kept, and RGs are only added when missing. Use `--bam_rg_mode overwrite` if you explicitly want to replace them.
 - The pipeline generates the reference FASTA index (`.fai`) internally with `samtools faidx`.
 - `MOSDEPTH_CALLABLE` also writes a per-sample `.callable_mb.txt` file giving callable BED size in megabases.
 
-## Metadata levels
-
-- `sample` in the samplesheet is sample-level metadata and should identify individual libraries or individuals.
-- `--species` is dataset-level metadata and describes the biology shared by the whole run.
-- `--dataset_id` is an optional dataset-level analysis label for merged outputs. If omitted, merged outputs fall back to `--species`.
-
 ## Software distribution
 
-- `-profile conda` uses the included Conda environment specification.
+- `-profile conda` uses the included Conda environment specification by default.
+- Set `--conda_env /path/to/existing/env` to reuse an existing Conda environment instead of solving from YAML.
+- Set `--conda_spec /path/to/env.yaml` if you want to override the default environment file.
+- Advanced users can still use raw Nextflow `-with-conda` options directly if they prefer.
 - `-profile apptainer` uses a prebuilt `.sif` image.
 - Set `--apptainer_container /path/to/var_call.sif` when using the Apptainer profile.
 - You can optionally set `--apptainer_cache_dir` if your cluster needs the cache somewhere specific.
@@ -87,7 +91,6 @@ Please also cite Nextflow and major underlying tools such as Freebayes where app
 ## Notes
 
 - Head-job submission details such as `bsub` directives and `module load nextflow/...` are intentionally kept outside the pipeline.
-- The Conda environment already includes the tools used by this refactored pipeline, including `bcftools` and `samtools`, so extra tool modules are usually unnecessary when running with `-profile conda`.
 - `MOSDEPTH_Q0` to `MOSDEPTH_Q3` are set automatically for the `MOSDEPTH_CALLABLE` process.
 - The next step toward closer nf-core alignment would be converting reusable steps to official nf-core modules and adding `nf-test` or small test data.
 

@@ -15,8 +15,11 @@ def helpMessage() {
     Usage:
       nextflow run var_call --analysis_mode paired --input samplesheet.csv --genome genome.fa --outdir results --species my_species --dataset_id my_run
 
-    Cluster example (Conda):
+    Cluster example (Conda YAML):
       nextflow run var_call -profile conda,lsf -params-file params/afusca_params.json -work-dir data/workdir/var_call -resume
+
+    Cluster example (existing Conda env):
+      nextflow run var_call -profile conda,lsf -params-file params/afusca_params.json --conda_env /path/to/existing/env -work-dir data/workdir/var_call -resume
 
     Cluster example (Apptainer): IN PROGRESS
       nextflow run var_call -profile apptainer,lsf -params-file params/afusca_params.json --apptainer_container /path/to/var_call.sif -work-dir data/workdir/var_call -resume
@@ -33,12 +36,18 @@ def helpMessage() {
       --bams                  Input BAM glob for bams mode
       --repeat_bed            Optional BED of repeat regions to exclude
       --dataset_id            Optional dataset/run label used for merged outputs
+      --bam_rg_mode           BAM RG policy for bams mode: preserve or overwrite
+      --conda_env             Optional path to an existing Conda environment to use with -profile conda
+      --conda_spec            Optional environment spec file to use instead of params/var_call.yaml
       --apptainer_container   Path to a .sif image when using -profile apptainer
       --apptainer_cache_dir   Optional cache directory for Apptainer/Singularity pulls and metadata
 
     Useful flags:
       --skip_trimming         Skip fastp in paired-read workflows
       --help                  Show this help message
+
+    Notes:
+      Advanced users can also use raw Nextflow -with-conda options directly.
     """.stripIndent()
 }
 
@@ -118,6 +127,10 @@ def validateParams() {
         error "Use either --bams or --input for bams mode, not both"
     }
 
+    if (!(params.bam_rg_mode in ['preserve', 'overwrite'])) {
+        error "Invalid --bam_rg_mode '${params.bam_rg_mode}'. Choose one of: preserve, overwrite"
+    }
+
     if (workflow.profile?.tokenize(',')?.contains('apptainer') && !params.apptainer_container) {
         error "Provide --apptainer_container when using -profile apptainer"
     }
@@ -137,6 +150,9 @@ def logParameters() {
         species             : ${params.species}
         dataset_id          : ${params.dataset_id ?: 'N/A'}
         run_label           : ${params.dataset_id ?: params.species}
+        conda_env           : ${params.conda_env ?: 'N/A'}
+        conda_spec          : ${params.conda_spec ?: 'N/A'}
+        bam_rg_mode         : ${params.bam_rg_mode}
         apptainer_container : ${params.apptainer_container ?: 'N/A'}
         skip_trimming       : ${params.skip_trimming}
     """.stripIndent()

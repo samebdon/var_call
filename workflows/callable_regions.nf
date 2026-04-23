@@ -12,11 +12,16 @@ workflow CALLABLE_REGIONS {
 
     main:
     MOSDEPTH_CALLABLE(deduped_bams, min_depth)
+    MOSDEPTH_CALLABLE.out.callable_bed
+        .map{ meta, bed -> bed}
+        .collect()
+        .set{ callable_bed_ch }
+        
     if (repeat_bed) {
-        INTERSECT_BEDS(MOSDEPTH_CALLABLE.out.callable_bed.collect(), repeat_bed, genome_index, dataset_id)
+        INTERSECT_BEDS(callable_bed_ch, repeat_bed, genome_index, dataset_id)
         callable_bed = INTERSECT_BEDS.out.freebayes
     } else {
-        INTERSECT_BEDS_NO_REPEATS(MOSDEPTH_CALLABLE.out.callable_bed.collect(), genome_index, dataset_id)
+        INTERSECT_BEDS_NO_REPEATS(callable_bed_ch, genome_index, dataset_id)
         callable_bed = INTERSECT_BEDS_NO_REPEATS.out.freebayes
     }
 

@@ -35,9 +35,9 @@ workflow VAR_CALL_PAIRED {
     BWA_MEM(genome, PREPARE_REFERENCE.out.bwa_index, trimmed_reads)
     SORT_BAM_SAMBAMBA(BWA_MEM.out)
     MARK_DUPES_SAMBAMBA(SORT_BAM_SAMBAMBA.out)
-    INDEX_BAM_SAMBAMBA(MARK_DUPES_SAMBAMBA.out.meta_bam)
-    aligned_bams = MARK_DUPES_SAMBAMBA.out.meta_bam.join(INDEX_BAM_SAMBAMBA.out)
-    CALLABLE_REGIONS(aligned_bams, params.min_depth, repeat_bed, PREPARE_REFERENCE.out.fasta_index, dataset_id)
+    //INDEX_BAM_SAMBAMBA(MARK_DUPES_SAMBAMBA.out.bam)
+    //aligned_bams = MARK_DUPES_SAMBAMBA.out.bam.join(INDEX_BAM_SAMBAMBA.out)
+    CALLABLE_REGIONS(MARK_DUPES_SAMBAMBA.out.bam, params.min_depth, repeat_bed, PREPARE_REFERENCE.out.fasta_index, dataset_id)
     markdup_bams = MARK_DUPES_SAMBAMBA.out.bam
         .map { meta, bam, _bai -> bam }
         .collect()
@@ -63,9 +63,9 @@ workflow VAR_CALL_BAMS {
     ADD_RGS(bams, params.bam_rg_mode)
     SORT_BAM_SAMBAMBA(ADD_RGS.out)
     MARK_DUPES_SAMBAMBA(SORT_BAM_SAMBAMBA.out)
-    INDEX_BAM_SAMBAMBA(MARK_DUPES_SAMBAMBA.out.meta_bam)
-    aligned_bams = MARK_DUPES_SAMBAMBA.out.meta_bam.join(INDEX_BAM_SAMBAMBA.out)
-    CALLABLE_REGIONS(aligned_bams, params.min_depth, repeat_bed, PREPARE_REFERENCE.out.fasta_index, dataset_id)
+    //INDEX_BAM_SAMBAMBA(MARK_DUPES_SAMBAMBA.out.bam)
+    //aligned_bams = MARK_DUPES_SAMBAMBA.out.bam.join(INDEX_BAM_SAMBAMBA.out)
+    CALLABLE_REGIONS(MARK_DUPES_SAMBAMBA.out.bam, params.min_depth, repeat_bed, PREPARE_REFERENCE.out.fasta_index, dataset_id)
     markdup_bams = MARK_DUPES_SAMBAMBA.out.bam
         .map { meta, bam, _bai -> bam }
         .collect()
@@ -91,9 +91,9 @@ workflow VAR_CALL_SINGLE_END {
     BWA_MEM_SE(genome, PREPARE_REFERENCE.out.bwa_index, reads)
     SORT_BAM_SAMBAMBA(BWA_MEM_SE.out)
     MARK_DUPES_SAMBAMBA(SORT_BAM_SAMBAMBA.out)
-    INDEX_BAM_SAMBAMBA(MARK_DUPES_SAMBAMBA.out.meta_bam)
-    aligned_bams = MARK_DUPES_SAMBAMBA.out.meta_bam.join(INDEX_BAM_SAMBAMBA.out)
-    CALLABLE_REGIONS(aligned_bams, params.min_depth, repeat_bed, PREPARE_REFERENCE.out.fasta_index, dataset_id)
+    //INDEX_BAM_SAMBAMBA(MARK_DUPES_SAMBAMBA.out.bam)
+    //aligned_bams = MARK_DUPES_SAMBAMBA.out.bam.join(INDEX_BAM_SAMBAMBA.out)
+    CALLABLE_REGIONS(MARK_DUPES_SAMBAMBA.out.bam, params.min_depth, repeat_bed, PREPARE_REFERENCE.out.fasta_index, dataset_id)
     markdup_bams = MARK_DUPES_SAMBAMBA.out.bam
         .map { meta, bam, _bai -> bam }
         .collect()

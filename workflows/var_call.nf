@@ -11,6 +11,7 @@ include { MARK_DUPES_SAMBAMBA } from '../modules/local/mark_dupes_sambamba'
 include { INDEX_BAM_SAMBAMBA } from '../modules/local/index_bam_sambamba'
 include { SAMBAMBA_MERGE } from '../modules/local/sambamba_merge'
 include { FREEBAYES } from '../modules/local/freebayes'
+include { FREEBAYES_PARALLEL } from '../modules/local/freebayes'
 
 workflow VAR_CALL_PAIRED {
     take:
@@ -37,8 +38,14 @@ workflow VAR_CALL_PAIRED {
     INDEX_BAM_SAMBAMBA(MARK_DUPES_SAMBAMBA.out.meta_bam)
     aligned_bams = MARK_DUPES_SAMBAMBA.out.meta_bam.join(INDEX_BAM_SAMBAMBA.out)
     CALLABLE_REGIONS(aligned_bams, params.min_depth, repeat_bed, PREPARE_REFERENCE.out.fasta_index, dataset_id)
-    SAMBAMBA_MERGE(MARK_DUPES_SAMBAMBA.out.bam_only.collect(), dataset_id)
-    FREEBAYES(genome, PREPARE_REFERENCE.out.fasta_index, SAMBAMBA_MERGE.out, CALLABLE_REGIONS.out.callable_bed)
+    markdup_bams = MARK_DUPES_SAMBAMBA.out.bam
+        .map { meta, bam, _bai -> bam }
+        .collect()
+    markdup_bams_all = MARK_DUPES_SAMBAMBA.out.bam
+        .map { meta, bam, bai -> [bam, bai] }
+        .collect()
+    // SAMBAMBA_MERGE(MARK_DUPES_SAMBAMBA.out.bam_only.collect(), dataset_id)
+    FREEBAYES_PARALLEL(genome, PREPARE_REFERENCE.out.fasta_index, markdup_bams, CALLABLE_REGIONS.out.callable_bed, markdup_bams_all)
     FILTER_VARIANTS(genome, FREEBAYES.out, CALLABLE_REGIONS.out.callable_bed, PREPARE_REFERENCE.out.fasta_index)
 }
 
@@ -59,8 +66,14 @@ workflow VAR_CALL_BAMS {
     INDEX_BAM_SAMBAMBA(MARK_DUPES_SAMBAMBA.out.meta_bam)
     aligned_bams = MARK_DUPES_SAMBAMBA.out.meta_bam.join(INDEX_BAM_SAMBAMBA.out)
     CALLABLE_REGIONS(aligned_bams, params.min_depth, repeat_bed, PREPARE_REFERENCE.out.fasta_index, dataset_id)
-    SAMBAMBA_MERGE(MARK_DUPES_SAMBAMBA.out.bam_only.collect(), dataset_id)
-    FREEBAYES(genome, PREPARE_REFERENCE.out.fasta_index, SAMBAMBA_MERGE.out, CALLABLE_REGIONS.out.callable_bed)
+    markdup_bams = MARK_DUPES_SAMBAMBA.out.bam
+        .map { meta, bam, _bai -> bam }
+        .collect()
+    markdup_bams_all = MARK_DUPES_SAMBAMBA.out.bam
+        .map { meta, bam, bai -> [bam, bai] }
+        .collect()
+    // SAMBAMBA_MERGE(MARK_DUPES_SAMBAMBA.out.bam_only.collect(), dataset_id)
+    FREEBAYES_PARALLEL(genome, PREPARE_REFERENCE.out.fasta_index, markdup_bams, CALLABLE_REGIONS.out.callable_bed, markdup_bams_all)
     FILTER_VARIANTS(genome, FREEBAYES.out, CALLABLE_REGIONS.out.callable_bed, PREPARE_REFERENCE.out.fasta_index)
 }
 
@@ -81,7 +94,13 @@ workflow VAR_CALL_SINGLE_END {
     INDEX_BAM_SAMBAMBA(MARK_DUPES_SAMBAMBA.out.meta_bam)
     aligned_bams = MARK_DUPES_SAMBAMBA.out.meta_bam.join(INDEX_BAM_SAMBAMBA.out)
     CALLABLE_REGIONS(aligned_bams, params.min_depth, repeat_bed, PREPARE_REFERENCE.out.fasta_index, dataset_id)
-    SAMBAMBA_MERGE(MARK_DUPES_SAMBAMBA.out.bam_only.collect(), dataset_id)
-    FREEBAYES(genome, PREPARE_REFERENCE.out.fasta_index, SAMBAMBA_MERGE.out, CALLABLE_REGIONS.out.callable_bed)
+    markdup_bams = MARK_DUPES_SAMBAMBA.out.bam
+        .map { meta, bam, _bai -> bam }
+        .collect()
+    markdup_bams_all = MARK_DUPES_SAMBAMBA.out.bam
+        .map { meta, bam, bai -> [bam, bai] }
+        .collect()
+    // SAMBAMBA_MERGE(MARK_DUPES_SAMBAMBA.out.bam_only.collect(), dataset_id)
+    FREEBAYES_PARALLEL(genome, PREPARE_REFERENCE.out.fasta_index, markdup_bams, CALLABLE_REGIONS.out.callable_bed, markdup_bams_all)
     FILTER_VARIANTS(genome, FREEBAYES.out, CALLABLE_REGIONS.out.callable_bed, PREPARE_REFERENCE.out.fasta_index)
 }

@@ -46,7 +46,7 @@ workflow VAR_CALL_PAIRED {
         .collect()
     // SAMBAMBA_MERGE(MARK_DUPES_SAMBAMBA.out.bam_only.collect(), dataset_id)
     FREEBAYES_PARALLEL(genome, PREPARE_REFERENCE.out.fasta_index, markdup_bams, CALLABLE_REGIONS.out.callable_bed, markdup_bams_all)
-    FILTER_VARIANTS(genome, FREEBAYES.out, CALLABLE_REGIONS.out.callable_bed, PREPARE_REFERENCE.out.fasta_index)
+    FILTER_VARIANTS(genome, FREEBAYES_PARALLEL.out, CALLABLE_REGIONS.out.callable_bed, PREPARE_REFERENCE.out.fasta_index)
 }
 
 workflow VAR_CALL_BAMS {
@@ -74,7 +74,7 @@ workflow VAR_CALL_BAMS {
         .collect()
     // SAMBAMBA_MERGE(MARK_DUPES_SAMBAMBA.out.bam_only.collect(), dataset_id)
     FREEBAYES_PARALLEL(genome, PREPARE_REFERENCE.out.fasta_index, markdup_bams, CALLABLE_REGIONS.out.callable_bed, markdup_bams_all)
-    FILTER_VARIANTS(genome, FREEBAYES.out, CALLABLE_REGIONS.out.callable_bed, PREPARE_REFERENCE.out.fasta_index)
+    FILTER_VARIANTS(genome, FREEBAYES_PARALLEL.out, CALLABLE_REGIONS.out.callable_bed, PREPARE_REFERENCE.out.fasta_index)
 }
 
 workflow VAR_CALL_SINGLE_END {
@@ -102,5 +102,5 @@ workflow VAR_CALL_SINGLE_END {
         .collect()
     // SAMBAMBA_MERGE(MARK_DUPES_SAMBAMBA.out.bam_only.collect(), dataset_id)
     FREEBAYES_PARALLEL(genome, PREPARE_REFERENCE.out.fasta_index, markdup_bams, CALLABLE_REGIONS.out.callable_bed, markdup_bams_all)
-    FILTER_VARIANTS(genome, FREEBAYES.out, CALLABLE_REGIONS.out.callable_bed, PREPARE_REFERENCE.out.fasta_index)
+    FILTER_VARIANTS(genome, FREEBAYES_PARALLEL.out, CALLABLE_REGIONS.out.callable_bed, PREPARE_REFERENCE.out.fasta_index)
 }

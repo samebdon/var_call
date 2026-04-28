@@ -1,9 +1,7 @@
 process MOSDEPTH_CALLABLE {
     tag "$meta"
     publishDir "${params.outdir}/bed", mode: 'copy'
-
-    memory '15 GB'
-
+    
     input:
     tuple val(meta), path(bam_f), path(bam_index)
     val(min_depth)

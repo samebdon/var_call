@@ -22,7 +22,7 @@ process FREEBAYES_PARALLEL {
     input:
     path(genome_f)
     path(genome_index)
-    path(bam_list)
+    val(bam_list)
     tuple val(species), path(bed_f)
     path(bams_staged)
 

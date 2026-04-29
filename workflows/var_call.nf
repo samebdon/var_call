@@ -39,7 +39,7 @@ workflow VAR_CALL_PAIRED {
     //aligned_bams = MARK_DUPES_SAMBAMBA.out.bam.join(INDEX_BAM_SAMBAMBA.out)
     CALLABLE_REGIONS(MARK_DUPES_SAMBAMBA.out.bam, params.min_depth, repeat_bed, PREPARE_REFERENCE.out.fasta_index, dataset_id)
     markdup_bams = MARK_DUPES_SAMBAMBA.out.bam
-        .map { meta, bam, _bai -> bam }
+        .map { meta, bam, bai -> bam }
         .collect()
     markdup_bams_all = MARK_DUPES_SAMBAMBA.out.bam
         .map { meta, bam, bai -> [bam, bai] }
@@ -67,7 +67,7 @@ workflow VAR_CALL_BAMS {
     //aligned_bams = MARK_DUPES_SAMBAMBA.out.bam.join(INDEX_BAM_SAMBAMBA.out)
     CALLABLE_REGIONS(MARK_DUPES_SAMBAMBA.out.bam, params.min_depth, repeat_bed, PREPARE_REFERENCE.out.fasta_index, dataset_id)
     markdup_bams = MARK_DUPES_SAMBAMBA.out.bam
-        .map { meta, bam, _bai -> bam }
+        .map { meta, bam, bai -> bam }
         .collect()
     markdup_bams_all = MARK_DUPES_SAMBAMBA.out.bam
         .map { meta, bam, bai -> [bam, bai] }
@@ -95,7 +95,7 @@ workflow VAR_CALL_SINGLE_END {
     //aligned_bams = MARK_DUPES_SAMBAMBA.out.bam.join(INDEX_BAM_SAMBAMBA.out)
     CALLABLE_REGIONS(MARK_DUPES_SAMBAMBA.out.bam, params.min_depth, repeat_bed, PREPARE_REFERENCE.out.fasta_index, dataset_id)
     markdup_bams = MARK_DUPES_SAMBAMBA.out.bam
-        .map { meta, bam, _bai -> bam }
+        .map { meta, bam, bai -> bam }
         .collect()
     markdup_bams_all = MARK_DUPES_SAMBAMBA.out.bam
         .map { meta, bam, bai -> [bam, bai] }

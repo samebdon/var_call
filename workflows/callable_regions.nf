@@ -1,31 +1,30 @@
 include { MOSDEPTH_CALLABLE } from '../modules/local/mosdepth_callable'
-include { INTERSECT_BEDS } from '../modules/local/intersect_beds'
-include { INTERSECT_BEDS_NO_REPEATS } from '../modules/local/intersect_beds_no_repeats'
+include { MULTIINTER_CALLABLE } from '../modules/local/multiinter_callable'
 
 workflow CALLABLE_REGIONS {
     take:
     deduped_bams
     min_depth
-    repeat_bed
     genome_index
     dataset_id
 
     main:
     MOSDEPTH_CALLABLE(deduped_bams, min_depth)
-    MOSDEPTH_CALLABLE.out.callable_bed
-        .map{ meta, bed -> bed}
+
+    callable_bed_inputs = MOSDEPTH_CALLABLE.out.callable_bed
+        .join(MOSDEPTH_CALLABLE.out.sample_name)
         .collect()
-        .set{ callable_bed_ch }
-        
-    if (repeat_bed) {
-        INTERSECT_BEDS(callable_bed_ch, repeat_bed, genome_index, dataset_id)
-        callable_bed = INTERSECT_BEDS.out.freebayes
-    } else {
-        INTERSECT_BEDS_NO_REPEATS(callable_bed_ch, genome_index, dataset_id)
-        callable_bed = INTERSECT_BEDS_NO_REPEATS.out.freebayes
-    }
+        .map { rows -> [rows.collect { it[2].text.trim() }, rows.collect { it[1] }] }
+
+    MULTIINTER_CALLABLE(callable_bed_inputs, genome_index, dataset_id)
+
+    depth_thresholds = MOSDEPTH_CALLABLE.out.depth_thresholds
+        .map { meta, threshold_file -> threshold_file }
+        .collect()
 
     emit:
-    callable_bed = callable_bed
+    multi_callable_bed = MULTIINTER_CALLABLE.out.multi_callable
+    joint_callable_bed = MULTIINTER_CALLABLE.out.joint_callable
+    depth_thresholds = depth_thresholds
     callable_size_mb = MOSDEPTH_CALLABLE.out.callable_size_mb
 }

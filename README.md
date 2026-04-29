@@ -2,6 +2,8 @@
 
 Freebayes variant-calling pipeline for paired-end reads, single-end reads, or BAM inputs.
 
+The current workflow uses `freebayes-parallel` and passes per-sample alignment files directly rather than merging them into a single BAM. Variants are now called before the joint callable mask is applied; per-sample genotypes are masked post-call with `bcftools filter -S .` using mosdepth-derived sample depth thresholds, and repeat regions are removed during hard filtering rather than pre-call region selection.
+
 ## Usage
 
 Glob FASTQ input:

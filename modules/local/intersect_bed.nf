@@ -5,16 +5,15 @@ process INTERSECT_BED {
     memory '4 GB'
 
     input:
-    path(bed)
+    tuple val(species), path(bed)
     path(repeat_bed)
     path(genome_index)
-    val(species)
 
     output:
     tuple val(species), path("${species}.callable.freebayes.norepeats.bed")
 
     script:
     """
-    bedtools subtract -a ${bed} -b ${repeat_bed} |         bedtools sort -faidx ${genome_index} |         bedtools merge > ${species}.callable.freebayes.norepeats.bed
+    bedtools subtract -a ${bed} -b ${repeat_bed}         | bedtools sort -faidx ${genome_index}         | bedtools merge         > ${species}.callable.freebayes.norepeats.bed
     """
 }

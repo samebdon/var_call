@@ -6,6 +6,17 @@ workflow PREPARE_REFERENCE {
     genome
 
     main:
+    SAMTOOLS_FAIDX(genome)
+
+    emit:
+    fasta_index = SAMTOOLS_FAIDX.out
+}
+
+workflow PREPARE_ALIGNMENT_REFERENCE {
+    take:
+    genome
+
+    main:
     BWA_INDEX(genome)
     SAMTOOLS_FAIDX(genome)
 

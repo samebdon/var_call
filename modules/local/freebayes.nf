@@ -20,10 +20,10 @@ process FREEBAYES_PARALLEL {
     tag "$meta"
 
     input:
-    path(genome_f)
+    path(genome)
     path(genome_index)
     val(bam_list)
-    tuple val(species), path(bed_f)
+    tuple val(species), path(bed)
     path(bams_staged)
 
     output:
@@ -40,7 +40,7 @@ process FREEBAYES_PARALLEL {
         --use-mapping-quality \
         --ploidy 2 \
         --haplotype-length -1 \
-        -t ${bed_f} \
+        -t ${bed} \
         --strict-vcf \
         -E 1 \
         -w \

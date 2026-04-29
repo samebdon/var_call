@@ -9,12 +9,12 @@
       "properties": {
         "analysis_mode": {
           "type": "string",
-          "enum": ["paired", "single_end", "bams"],
+          "enum": ["paired", "single_end", "alignments", "bams"],
           "description": "Pipeline entry mode."
         },
         "input": {
           "type": "string",
-          "description": "CSV or TSV samplesheet for paired-end, single-end, or BAM-based runs."
+          "description": "CSV or TSV samplesheet for paired-end, single-end, or alignment-based runs."
         },
         "reads": {
           "type": "string",
@@ -22,7 +22,16 @@
         },
         "bams": {
           "type": "string",
-          "description": "Glob path to BAM input files when not using a samplesheet."
+          "description": "Legacy glob path to BAM input files when not using a samplesheet."
+        },
+        "alignments": {
+          "type": "string",
+          "description": "Glob path to BAM or CRAM input files when not using a samplesheet."
+        },
+        "alignment_format": {
+          "type": "string",
+          "description": "Output alignment format for read-based modes: bam or cram.",
+          "enum": ["bam", "cram"]
         },
         "genome": {
           "type": "string",

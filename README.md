@@ -1,6 +1,6 @@
 # var_call
 
-Freebayes variant-calling pipeline for paired-end reads, single-end reads, or BAM inputs.
+Freebayes variant-calling pipeline for paired-end reads, single-end reads, or alignment inputs (BAM/CRAM).
 
 The current workflow uses `freebayes-parallel` and passes per-sample alignment files directly rather than merging them into a single BAM. Variants are now called before the joint callable mask is applied; per-sample genotypes are masked post-call with `bcftools filter -S .` using mosdepth-derived sample depth thresholds, and repeat regions are removed during hard filtering rather than pre-call region selection.
 
@@ -18,10 +18,10 @@ Paired-end reads from a CSV/TSV samplesheet:
 nextflow run main.nf   --analysis_mode paired   --input assets/samplesheet.csv   --genome reference/genome.fa   --species my_species   --dataset_id my_species_reseq_2026   --outdir results   -profile standard,conda
 ```
 
-BAM input from a CSV/TSV samplesheet:
+Alignment input from a CSV/TSV samplesheet:
 
 ```bash
-nextflow run main.nf   --analysis_mode bams   --input assets/bam_samplesheet.csv   --genome reference/genome.fa   --species my_species   --outdir results   -profile lsf,conda
+nextflow run main.nf   --analysis_mode alignments   --input assets/bam_samplesheet.csv   --genome reference/genome.fa   --species my_species   --outdir results   -profile lsf,conda
 ```
 
 Params-file cluster run with Conda YAML:
@@ -46,7 +46,7 @@ nextflow run main.nf   -profile apptainer,lsf   -params-file params/afusca_param
 
 - `paired`: one or more paired-end samples
 - `single_end`: one or more single-end FASTQs
-- `bams`: one or more BAM inputs
+- `bams`: one or more BAM or CRAM inputs
 
 ## Input notes
 
@@ -83,3 +83,6 @@ Please also cite Nextflow and major underlying tools such as Freebayes where app
 ## Notes
 
 See [docs/output.md](/Users/se13/workspace/projects/pipelines/var_call/docs/output.md) for more detail.
+
+
+Read-based modes can also emit CRAMs by setting `--alignment_format cram`, which switches those branches to a Samtools-based preparation path instead of the BAM/Sambamba path.

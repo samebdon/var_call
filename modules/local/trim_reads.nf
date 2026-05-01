@@ -6,14 +6,24 @@ process TRIM_READS {
     memory '4 GB'
 
     input:
-    tuple val(meta), path(reads)
+    tuple val(meta), path(read1), path(read2)
 
     output:
-    tuple val(meta), path('fastp/*.fastp.fastq.gz')
+    tuple val(meta), path("fastp/${meta}.1.fastp.fastq.gz"), path("fastp/${meta}.2.fastp.fastq.gz")
 
     script:
     """
+    set -euo pipefail
     mkdir -p fastp
-    fastp         -i ${reads[0]}         -I ${reads[1]}         -o fastp/${meta}.1.fastp.fastq.gz         -O fastp/${meta}.2.fastp.fastq.gz         --length_required 33         --cut_front         --cut_tail         --cut_mean_quality 20         --thread ${task.cpus}
+    fastp \
+        -i ${read1} \
+        -I ${read2} \
+        -o fastp/${meta}.1.fastp.fastq.gz \
+        -O fastp/${meta}.2.fastp.fastq.gz \
+        --length_required 33 \
+        --cut_front \
+        --cut_tail \
+        --cut_mean_quality 20 \
+        --thread ${task.cpus}
     """
 }

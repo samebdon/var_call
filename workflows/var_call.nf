@@ -7,6 +7,8 @@ include { BWA_MEM } from '../modules/local/bwa_mem'
 include { BWA_MEM_SE } from '../modules/local/bwa_mem_se'
 include { BWA_MEM_CRAM } from '../modules/local/bwa_mem_cram'
 include { BWA_MEM_SE_CRAM } from '../modules/local/bwa_mem_se_cram'
+include { READS_CRAM_TO_FASTQ_PAIRED } from '../modules/local/reads_cram_to_fastq_paired'
+include { READS_CRAM_TO_FASTQ_SINGLE } from '../modules/local/reads_cram_to_fastq_single'
 include { ADD_RGS } from '../modules/local/add_rgs'
 include { PREPARE_CRAM_SAMTOOLS } from '../modules/local/prepare_cram_samtools'
 include { SORT_BAM_SAMBAMBA } from '../modules/local/sort_bam_sambamba'
@@ -21,15 +23,23 @@ workflow VAR_CALL_PAIRED {
     species
     dataset_id
     skip_trimming
+    read_format
     alignment_format
 
     main:
     PREPARE_ALIGNMENT_REFERENCE(genome)
 
-    if (skip_trimming) {
-        trimmed_reads = read_files
+    if (read_format == 'cram') {
+        READS_CRAM_TO_FASTQ_PAIRED(read_files)
+        input_reads = READS_CRAM_TO_FASTQ_PAIRED.out
     } else {
-        TRIM_READS(read_files)
+        input_reads = read_files
+    }
+
+    if (skip_trimming) {
+        trimmed_reads = input_reads
+    } else {
+        TRIM_READS(input_reads)
         trimmed_reads = TRIM_READS.out
     }
 
@@ -114,16 +124,24 @@ workflow VAR_CALL_SINGLE_END {
     repeat_bed
     species
     dataset_id
+    read_format
     alignment_format
 
     main:
     PREPARE_ALIGNMENT_REFERENCE(genome)
 
+    if (read_format == 'cram') {
+        READS_CRAM_TO_FASTQ_SINGLE(reads)
+        input_reads = READS_CRAM_TO_FASTQ_SINGLE.out
+    } else {
+        input_reads = reads
+    }
+
     if (alignment_format == 'cram') {
-        BWA_MEM_SE_CRAM(genome, PREPARE_ALIGNMENT_REFERENCE.out.bwa_index, reads)
+        BWA_MEM_SE_CRAM(genome, PREPARE_ALIGNMENT_REFERENCE.out.bwa_index, input_reads)
         prepared_alignments = BWA_MEM_SE_CRAM.out.alignment
     } else {
-        BWA_MEM_SE(genome, PREPARE_ALIGNMENT_REFERENCE.out.bwa_index, reads)
+        BWA_MEM_SE(genome, PREPARE_ALIGNMENT_REFERENCE.out.bwa_index, input_reads)
         SORT_BAM_SAMBAMBA(BWA_MEM_SE.out)
         MARK_DUPES_SAMBAMBA(SORT_BAM_SAMBAMBA.out)
         prepared_alignments = MARK_DUPES_SAMBAMBA.out.bam

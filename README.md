@@ -1,8 +1,6 @@
 # var_call
 
-Freebayes variant-calling pipeline for paired-end reads, single-end reads, or alignment inputs (BAM/CRAM).
-
-The current workflow uses `freebayes-parallel` and passes per-sample alignment files directly rather than merging them into a single BAM. Variants are now called before the joint callable mask is applied; per-sample genotypes are masked post-call with `bcftools filter -S .` using mosdepth-derived sample depth thresholds, and repeat regions are removed during hard filtering rather than pre-call region selection.
+Freebayes variant-calling pipeline using paired-end reads, single-end reads, or alignments (BAM/CRAM).
 
 ## Usage
 
@@ -46,23 +44,21 @@ nextflow run main.nf   -profile apptainer,lsf   -params-file params/afusca_param
 
 - `paired`: one or more paired-end samples
 - `single_end`: one or more single-end FASTQs
-- `bams`: one or more BAM or CRAM inputs
+- `alignments`: one or more BAM or CRAM inputs
 
 ## Input notes
 
 - Use `--input` with [assets/samplesheet.csv](/Users/se13/workspace/projects/pipelines/var_call/assets/samplesheet.csv) for paired-end runs.
 - Use `--input` with [assets/samplesheet_single_end.csv](/Users/se13/workspace/projects/pipelines/var_call/assets/samplesheet_single_end.csv) for single-end runs.
 - Use `--input` with [assets/bam_samplesheet.csv](/Users/se13/workspace/projects/pipelines/var_call/assets/bam_samplesheet.csv) for BAM mode.
-- `--reads` or '--bams' can be pointed to directly instead of using an input table.
+- `--reads` or '--alignments' can be pointed to directly instead of using an input table.
 - `--repeat_bed` is optional. If omitted, callable regions are generated without repeat subtraction.
-- `MOSDEPTH_CALLABLE` also writes a per-sample `.callable_mb.txt` file giving callable BED size in megabases.
 
 ## Software distribution
 
 - `-profile conda` uses the included Conda environment specification by default.
 - Set `--conda_env /path/to/existing/env` to reuse an existing Conda environment instead of solving from YAML.
 - Set `--conda_spec /path/to/env.yaml` if you want to override the default environment file.
-- Advanced users can still use raw Nextflow `-with-conda` options directly if they prefer.
 - `-profile apptainer` uses a prebuilt `.sif` image.
 - Set `--apptainer_container /path/to/var_call.sif` when using the Apptainer profile.
 - You can optionally set `--apptainer_cache_dir` if your cluster needs the cache somewhere specific.
@@ -85,4 +81,4 @@ Please also cite Nextflow and major underlying tools such as Freebayes where app
 See [docs/output.md](/Users/se13/workspace/projects/pipelines/var_call/docs/output.md) for more detail.
 
 
-Read-based modes can also emit CRAMs by setting `--alignment_format cram`, which switches those branches to a Samtools-based preparation path instead of the BAM/Sambamba path.
+Raw read CRAMs are now supported in read-based modes with `--read_format cram`. In paired mode these are converted to mate FASTQs with `samtools collate | samtools fastq` before optional trimming and alignment, independently of whether the mapped output format is BAM or CRAM.

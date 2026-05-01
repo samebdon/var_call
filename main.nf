@@ -32,7 +32,8 @@ def helpMessage() {
 
     Mode-specific parameters:
       --input                 CSV or TSV samplesheet for paired, single_end, or alignments mode
-      --reads                 FASTQ glob for paired / single_end
+      --reads                 FASTQ or raw-read CRAM glob for paired / single_end
+      --read_format           Input read format for read-based modes: fastq or cram
       --alignments            Glob path to BAM or CRAM input files when not using a samplesheet
       --bams                  Legacy alias for --alignments in alignments mode
       --alignment_format      Output alignment format for read-based modes: bam or cram
@@ -70,27 +71,41 @@ def inferAlignmentFormat(pathLike) {
     error "Could not infer alignment format from '${pathLike}'. Expected a .bam or .cram file."
 }
 
-def pairedSamplesheetChannel(samplesheet) {
+def pairedSamplesheetChannel(samplesheet, readFormat) {
     def sep = samplesheetSeparator(samplesheet)
     Channel
         .fromPath(samplesheet, checkIfExists: true)
         .splitCsv(header: true, sep: sep)
         .map { row ->
-            if (!row.sample || !row.fastq_1 || !row.fastq_2) {
-                error "Paired-end samplesheet rows must contain sample, fastq_1, and fastq_2 columns"
+            if (readFormat == 'cram') {
+                def cramPath = row.cram ?: row.reads_cram ?: row.reads
+                if (!row.sample || !cramPath) {
+                    error "Paired-end CRAM samplesheet rows must contain sample and cram"
+                }
+                return [ row.sample as String, file(cramPath) ]
             }
-            [ row.sample as String, [ file(row.fastq_1), file(row.fastq_2) ] ]
+            if (!row.sample || !row.fastq_1 || !row.fastq_2) {
+                error "Paired-end FASTQ samplesheet rows must contain sample, fastq_1, and fastq_2"
+            }
+            [ row.sample as String, file(row.fastq_1), file(row.fastq_2) ]
         }
 }
 
-def singleEndSamplesheetChannel(samplesheet) {
+def singleEndSamplesheetChannel(samplesheet, readFormat) {
     def sep = samplesheetSeparator(samplesheet)
     Channel
         .fromPath(samplesheet, checkIfExists: true)
         .splitCsv(header: true, sep: sep)
         .map { row ->
+            if (readFormat == 'cram') {
+                def cramPath = row.cram ?: row.reads_cram ?: row.reads
+                if (!row.sample || !cramPath) {
+                    error "Single-end CRAM samplesheet rows must contain sample and cram"
+                }
+                return [ row.sample as String, file(cramPath) ]
+            }
             if (!row.sample || !row.fastq_1) {
-                error "Single-end samplesheet rows must contain sample and fastq_1 columns"
+                error "Single-end FASTQ samplesheet rows must contain sample and fastq_1"
             }
             [ row.sample as String, file(row.fastq_1) ]
         }
@@ -153,6 +168,10 @@ def validateParams() {
         error "Invalid --alignment_format '${params.alignment_format}'. Choose one of: bam, cram"
     }
 
+    if (!(params.read_format in ['fastq', 'cram'])) {
+        error "Invalid --read_format '${params.read_format}'. Choose one of: fastq, cram"
+    }
+
     if (workflow.profile?.tokenize(',')?.contains('apptainer') && !params.apptainer_container) {
         error "Provide --apptainer_container when using -profile apptainer"
     }
@@ -167,6 +186,7 @@ def logParameters() {
         genome              : ${params.genome}
         input               : ${params.input ?: 'N/A'}
         reads               : ${params.reads ?: 'N/A'}
+        read_format         : ${params.read_format}
         alignments          : ${params.alignments ?: params.bams ?: 'N/A'}
         alignment_format    : ${params.alignment_format}
         repeat_bed          : ${params.repeat_bed ?: 'N/A'}
@@ -189,13 +209,23 @@ workflow {
     def normalizedMode = params.analysis_mode == 'bams' ? 'alignments' : params.analysis_mode
 
     if (normalizedMode == 'paired') {
-        read_pairs_ch = params.input ? pairedSamplesheetChannel(params.input) : Channel.fromFilePairs(params.reads, checkIfExists: true)
-        VAR_CALL_PAIRED(params.genome, read_pairs_ch, params.repeat_bed, params.species, params.dataset_id ?: params.species, params.skip_trimming, params.alignment_format)
+        if (params.input) {
+            read_pairs_ch = pairedSamplesheetChannel(params.input, params.read_format)
+        } else if (params.read_format == 'cram') {
+            read_pairs_ch = Channel.fromPath(params.reads, checkIfExists: true).map { cram -> [cram.baseName.tokenize('.')[0], cram] }
+        } else {
+            read_pairs_ch = Channel.fromFilePairs(params.reads, checkIfExists: true).map { meta, reads -> [meta, reads[0], reads[1]] }
+        }
+        VAR_CALL_PAIRED(params.genome, read_pairs_ch, params.repeat_bed, params.species, params.dataset_id ?: params.species, params.skip_trimming, params.read_format, params.alignment_format)
     }
 
     if (normalizedMode == 'single_end') {
-        reads_ch = params.input ? singleEndSamplesheetChannel(params.input) : Channel.fromPath(params.reads, checkIfExists: true).map { read -> [read.baseName, read] }
-        VAR_CALL_SINGLE_END(params.genome, reads_ch, params.repeat_bed, params.species, params.dataset_id ?: params.species, params.alignment_format)
+        if (params.input) {
+            reads_ch = singleEndSamplesheetChannel(params.input, params.read_format)
+        } else {
+            reads_ch = Channel.fromPath(params.reads, checkIfExists: true).map { read -> [read.baseName.tokenize('.')[0], read] }
+        }
+        VAR_CALL_SINGLE_END(params.genome, reads_ch, params.repeat_bed, params.species, params.dataset_id ?: params.species, params.read_format, params.alignment_format)
     }
 
     if (normalizedMode == 'alignments') {

@@ -1,5 +1,6 @@
 process BWA_MEM_SE_CRAM {
     tag "$meta"
+    label 'align_reads'
     publishDir "${params.outdir}/crams", mode: 'copy'
 
     memory '8 GB'
@@ -14,6 +15,7 @@ process BWA_MEM_SE_CRAM {
 
     script:
     """
+    set -euo pipefail
     bwa mem \
         -t ${task.cpus} \
         -R "@RG\tID:${meta}\tSM:${meta}\tPL:ILLUMINA\tPU:${meta}\tLB:${meta}\tDS:${meta}" \

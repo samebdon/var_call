@@ -1,5 +1,6 @@
 process BWA_MEM_CRAM {
     tag "$meta"
+    label 'align_reads'
     publishDir "${params.outdir}/crams", mode: 'copy'
 
     memory '8 GB'
@@ -7,19 +8,20 @@ process BWA_MEM_CRAM {
     input:
     path(genome_f)
     path(genome_index)
-    tuple val(meta), path(reads)
+    tuple val(meta), path(read1), path(read2)
 
     output:
     tuple val(meta), path("${meta}.deduped.cram"), path("${meta}.deduped.cram.crai"), emit: alignment
 
     script:
     """
+    set -euo pipefail
     bwa mem \
         -t ${task.cpus} \
         -R "@RG\tID:${meta}\tSM:${meta}\tPL:ILLUMINA\tPU:${meta}\tLB:${meta}\tDS:${meta}" \
         ${genome_f} \
-        ${reads[0]} \
-        ${reads[1]} \
+        ${read1} \
+        ${read2} \
       | samtools sort -@ ${task.cpus} -n -T ${meta}.name_sort -O bam -o ${meta}.name_sorted.bam -
     samtools fixmate -@ ${task.cpus} -m ${meta}.name_sorted.bam ${meta}.fixmate.bam
     samtools sort -@ ${task.cpus} -T ${meta}.coord_sort -O bam -o ${meta}.coord_sorted.bam ${meta}.fixmate.bam

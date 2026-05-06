@@ -11,12 +11,15 @@ workflow CALLABLE_REGIONS {
     main:
     MOSDEPTH_CALLABLE(deduped_bams, min_depth)
 
-    callable_bed_inputs = MOSDEPTH_CALLABLE.out.callable_bed
-        .join(MOSDEPTH_CALLABLE.out.sample_name)
+    callable_beds = MOSDEPTH_CALLABLE.out.callable_bed
+        .map { meta, bed -> bed }
         .collect()
-        .map { rows -> [rows.collect { it[2] }, rows.collect { it[1] }] }
 
-    MULTIINTER_CALLABLE(callable_bed_inputs, genome_index, dataset_id)
+    sample_name_files = MOSDEPTH_CALLABLE.out.sample_name
+        .map { meta, sample_name_file -> sample_name_file }
+        .collect()
+
+    MULTIINTER_CALLABLE(callable_beds, sample_name_files, genome_index, dataset_id)
 
     depth_thresholds = MOSDEPTH_CALLABLE.out.depth_thresholds
         .map { meta, threshold_file -> threshold_file }

@@ -5,7 +5,8 @@ process MULTIINTER_CALLABLE {
     memory '4 GB'
 
     input:
-    tuple val(sample_names), path(beds, stageAs: 'inputs/*')
+    path(beds, stageAs: 'inputs/*.bed')
+    path(sample_name_files, stageAs: 'samples/*.txt')
     path(genome_index)
     val(species)
 
@@ -15,14 +16,18 @@ process MULTIINTER_CALLABLE {
     tuple val(species), path("${species}.callable.samples.txt"), emit: sample_names
 
     script:
-    def quotedNames = sample_names.collect { "'${it.replace("'", "'\''")}'" }.join(' ')
-    def escapedNames = sample_names.join("\n")
     """
+    mapfile -t SAMPLE_NAMES < <(cat samples/*.txt)
+    QUOTED_NAMES="\$(printf "'%s' " "\${SAMPLE_NAMES[@]}")"
     N_FILES="\$(ls inputs/*.bed | wc -l)"
-    cat <<'EOF' > ${species}.callable.samples.txt
-${escapedNames}
-EOF
-    bedtools multiinter -names ${quotedNames} -i inputs/*.bed         | bedtools sort -faidx ${genome_index}         > ${species}.callable.multiinter.bed
-    awk -v var=\$N_FILES '\$4==var {print \$1"\t"\$2"\t"\$3}' ${species}.callable.multiinter.bed         | bedtools sort -faidx ${genome_index}         | bedtools merge         > ${species}.callable.all_samples.bed
+
+    printf '%s\\n' "\${SAMPLE_NAMES[@]}" > ${species}.callable.samples.txt
+    eval bedtools multiinter -names \$QUOTED_NAMES -i inputs/*.bed \
+        | bedtools sort -faidx ${genome_index} \
+        > ${species}.callable.multiinter.bed
+    awk -v var=\$N_FILES '\$4==var {print \$1"\\t"\$2"\\t"\$3}' ${species}.callable.multiinter.bed \
+        | bedtools sort -faidx ${genome_index} \
+        | bedtools merge \
+        > ${species}.callable.all_samples.bed
     """
 }

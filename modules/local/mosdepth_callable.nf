@@ -9,7 +9,7 @@ process MOSDEPTH_CALLABLE {
     output:
     tuple val(meta), path("mosdepth/${bam_f.baseName}.callable.bed"), emit: callable_bed
     tuple val(meta), path("mosdepth/${bam_f.baseName}.callable_mb.txt"), emit: callable_size_mb
-    tuple val(meta), path("mosdepth/${bam_f.baseName}.sample_name.txt"), emit: sample_name
+    tuple val(meta), env(SAMPLE_NAME), emit: sample_name
     tuple val(meta), path("mosdepth/${bam_f.baseName}.depth_thresholds.tsv"), emit: depth_thresholds
 
     script:
@@ -35,10 +35,11 @@ process MOSDEPTH_CALLABLE {
         exit 1
     fi
 
+    export SAMPLE_NAME
+
     mosdepth -t ${task.cpus} -n --quantize 0:1:${min_depth}:\${MAX_DEPTH}: ${meta} ${bam_f}
     zcat ${meta}.quantized.bed.gz | grep "${min_depth}:\$MAX_DEPTH" > mosdepth/${bam_f.baseName}.callable.bed
     awk '{SUM += \$3-\$2} END {printf "%.3f", SUM/1000000}' mosdepth/${bam_f.baseName}.callable.bed > mosdepth/${bam_f.baseName}.callable_mb.txt
-    printf '%s\\n' "\$SAMPLE_NAME" > mosdepth/${bam_f.baseName}.sample_name.txt
     printf '%s\\t%s\\t%s\\n' "\$SAMPLE_NAME" "${min_depth}" "\$MAX_DEPTH" > mosdepth/${bam_f.baseName}.depth_thresholds.tsv
     """
 }

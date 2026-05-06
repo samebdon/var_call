@@ -14,7 +14,7 @@ workflow CALLABLE_REGIONS {
     callable_bed_inputs = MOSDEPTH_CALLABLE.out.callable_bed
         .join(MOSDEPTH_CALLABLE.out.sample_name)
         .collect()
-        .map { rows -> [rows.collect { it[2].text.trim() }, rows.collect { it[1] }] }
+        .map { rows -> [rows.collect { it[2] }, rows.collect { it[1] }] }
 
     MULTIINTER_CALLABLE(callable_bed_inputs, genome_index, dataset_id)
 

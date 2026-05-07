@@ -10,7 +10,13 @@ include { BWA_MEM_SE_CRAM } from '../modules/local/bwa_mem_se_cram'
 include { READS_CRAM_TO_FASTQ_PAIRED } from '../modules/local/reads_cram_to_fastq_paired'
 include { READS_CRAM_TO_FASTQ_SINGLE } from '../modules/local/reads_cram_to_fastq_single'
 include { ADD_RGS } from '../modules/local/add_rgs'
-include { PREPARE_CRAM_SAMTOOLS } from '../modules/local/prepare_cram_samtools'
+include { ADD_RGS_SAMTOOLS } from '../modules/local/add_rgs_samtools'
+include { SORT_NAME_SAMTOOLS } from '../modules/local/sort_name_samtools'
+include { FIXMATE_SAMTOOLS } from '../modules/local/fixmate_samtools'
+include { SORT_COORD_SAMTOOLS } from '../modules/local/sort_coord_samtools'
+include { MARK_DUPES_SAMTOOLS } from '../modules/local/mark_dupes_samtools'
+include { VIEW_TO_CRAM_SAMTOOLS } from '../modules/local/view_to_cram_samtools'
+include { INDEX_CRAM_SAMTOOLS } from '../modules/local/index_cram_samtools'
 include { SORT_BAM_SAMBAMBA } from '../modules/local/sort_bam_sambamba'
 include { MARK_DUPES_SAMBAMBA } from '../modules/local/mark_dupes_sambamba'
 include { FREEBAYES_PARALLEL } from '../modules/local/freebayes'
@@ -45,7 +51,13 @@ workflow VAR_CALL_PAIRED {
 
     if (alignment_format == 'cram') {
         BWA_MEM_CRAM(genome, PREPARE_ALIGNMENT_REFERENCE.out.bwa_index, trimmed_reads)
-        prepared_alignments = BWA_MEM_CRAM.out.alignment
+        FIXMATE_SAMTOOLS(BWA_MEM_CRAM.out)
+        SORT_COORD_SAMTOOLS(FIXMATE_SAMTOOLS.out)
+        MARK_DUPES_SAMTOOLS(SORT_COORD_SAMTOOLS.out)
+        VIEW_TO_CRAM_SAMTOOLS(genome, MARK_DUPES_SAMTOOLS.out)
+        INDEX_CRAM_SAMTOOLS(VIEW_TO_CRAM_SAMTOOLS.out)
+        prepared_alignments = VIEW_TO_CRAM_SAMTOOLS.out.join(INDEX_CRAM_SAMTOOLS.out)
+            .map { meta, cram_f, crai_f -> [meta, cram_f, crai_f] }
     } else {
         BWA_MEM(genome, PREPARE_ALIGNMENT_REFERENCE.out.bwa_index, trimmed_reads)
         SORT_BAM_SAMBAMBA(BWA_MEM.out)
@@ -55,13 +67,8 @@ workflow VAR_CALL_PAIRED {
 
     CALLABLE_REGIONS(prepared_alignments, params.min_depth, PREPARE_ALIGNMENT_REFERENCE.out.fasta_index, dataset_id)
 
-    bam_list = prepared_alignments
-        .map { meta, alignment, alignment_index -> alignment }
-        .collect()
-
-    staged_bams = prepared_alignments
-        .map { meta, alignment, alignment_index -> [alignment, alignment_index] }
-        .collect()
+    bam_list = prepared_alignments.map { meta, alignment, alignment_index -> alignment }.collect()
+    staged_bams = prepared_alignments.map { meta, alignment, alignment_index -> [alignment, alignment_index] }.collect()
 
     FREEBAYES_PARALLEL(genome, PREPARE_ALIGNMENT_REFERENCE.out.fasta_index, bam_list, dataset_id, staged_bams)
     FILTER_VARIANTS(genome, FREEBAYES_PARALLEL.out, CALLABLE_REGIONS.out.multi_callable_bed, CALLABLE_REGIONS.out.depth_thresholds, PREPARE_ALIGNMENT_REFERENCE.out.fasta_index, repeat_bed)
@@ -95,8 +102,15 @@ workflow VAR_CALL_ALIGNMENTS {
 
     if (split_alignments.cram) {
         cram_inputs = split_alignments.cram.map { meta, alignment, format -> [meta, alignment] }
-        PREPARE_CRAM_SAMTOOLS(genome, cram_inputs, params.bam_rg_mode)
-        prepared_crams = PREPARE_CRAM_SAMTOOLS.out.alignment
+        ADD_RGS_SAMTOOLS(cram_inputs, params.bam_rg_mode)
+        SORT_NAME_SAMTOOLS(ADD_RGS_SAMTOOLS.out)
+        FIXMATE_SAMTOOLS(SORT_NAME_SAMTOOLS.out)
+        SORT_COORD_SAMTOOLS(FIXMATE_SAMTOOLS.out)
+        MARK_DUPES_SAMTOOLS(SORT_COORD_SAMTOOLS.out)
+        VIEW_TO_CRAM_SAMTOOLS(genome, MARK_DUPES_SAMTOOLS.out)
+        INDEX_CRAM_SAMTOOLS(VIEW_TO_CRAM_SAMTOOLS.out)
+        prepared_crams = VIEW_TO_CRAM_SAMTOOLS.out.join(INDEX_CRAM_SAMTOOLS.out)
+            .map { meta, cram_f, crai_f -> [meta, cram_f, crai_f] }
     } else {
         prepared_crams = Channel.empty()
     }
@@ -105,13 +119,8 @@ workflow VAR_CALL_ALIGNMENTS {
 
     CALLABLE_REGIONS(prepared_alignments, params.min_depth, PREPARE_REFERENCE.out.fasta_index, dataset_id)
 
-    bam_list = prepared_alignments
-        .map { meta, alignment, alignment_index -> alignment }
-        .collect()
-
-    staged_bams = prepared_alignments
-        .map { meta, alignment, alignment_index -> [alignment, alignment_index] }
-        .collect()
+    bam_list = prepared_alignments.map { meta, alignment, alignment_index -> alignment }.collect()
+    staged_bams = prepared_alignments.map { meta, alignment, alignment_index -> [alignment, alignment_index] }.collect()
 
     FREEBAYES_PARALLEL(genome, PREPARE_REFERENCE.out.fasta_index, bam_list, dataset_id, staged_bams)
     FILTER_VARIANTS(genome, FREEBAYES_PARALLEL.out, CALLABLE_REGIONS.out.multi_callable_bed, CALLABLE_REGIONS.out.depth_thresholds, PREPARE_REFERENCE.out.fasta_index, repeat_bed)
@@ -139,7 +148,13 @@ workflow VAR_CALL_SINGLE_END {
 
     if (alignment_format == 'cram') {
         BWA_MEM_SE_CRAM(genome, PREPARE_ALIGNMENT_REFERENCE.out.bwa_index, input_reads)
-        prepared_alignments = BWA_MEM_SE_CRAM.out.alignment
+        FIXMATE_SAMTOOLS(BWA_MEM_SE_CRAM.out)
+        SORT_COORD_SAMTOOLS(FIXMATE_SAMTOOLS.out)
+        MARK_DUPES_SAMTOOLS(SORT_COORD_SAMTOOLS.out)
+        VIEW_TO_CRAM_SAMTOOLS(genome, MARK_DUPES_SAMTOOLS.out)
+        INDEX_CRAM_SAMTOOLS(VIEW_TO_CRAM_SAMTOOLS.out)
+        prepared_alignments = VIEW_TO_CRAM_SAMTOOLS.out.join(INDEX_CRAM_SAMTOOLS.out)
+            .map { meta, cram_f, crai_f -> [meta, cram_f, crai_f] }
     } else {
         BWA_MEM_SE(genome, PREPARE_ALIGNMENT_REFERENCE.out.bwa_index, input_reads)
         SORT_BAM_SAMBAMBA(BWA_MEM_SE.out)
@@ -149,13 +164,8 @@ workflow VAR_CALL_SINGLE_END {
 
     CALLABLE_REGIONS(prepared_alignments, params.min_depth, PREPARE_ALIGNMENT_REFERENCE.out.fasta_index, dataset_id)
 
-    bam_list = prepared_alignments
-        .map { meta, alignment, alignment_index -> alignment }
-        .collect()
-
-    staged_bams = prepared_alignments
-        .map { meta, alignment, alignment_index -> [alignment, alignment_index] }
-        .collect()
+    bam_list = prepared_alignments.map { meta, alignment, alignment_index -> alignment }.collect()
+    staged_bams = prepared_alignments.map { meta, alignment, alignment_index -> [alignment, alignment_index] }.collect()
 
     FREEBAYES_PARALLEL(genome, PREPARE_ALIGNMENT_REFERENCE.out.fasta_index, bam_list, dataset_id, staged_bams)
     FILTER_VARIANTS(genome, FREEBAYES_PARALLEL.out, CALLABLE_REGIONS.out.multi_callable_bed, CALLABLE_REGIONS.out.depth_thresholds, PREPARE_ALIGNMENT_REFERENCE.out.fasta_index, repeat_bed)

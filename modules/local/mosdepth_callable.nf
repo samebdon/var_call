@@ -46,7 +46,7 @@ process MOSDEPTH_CALLABLE {
 
     if [ -s mosdepth/${bam_f.baseName}.callable.bed ]; then
         read -r CALLABLE_MB < mosdepth/${bam_f.baseName}.callable_mb.txt
-        printf '%s\tcallable_sites\tok\tcallable_mb=%s\n' '${meta}' "$CALLABLE_MB" > mosdepth/${bam_f.baseName}.callable_status.tsv
+        printf '%s\tcallable_sites\tok\tcallable_mb=%s\n' '${meta}' "\$CALLABLE_MB" > mosdepth/${bam_f.baseName}.callable_status.tsv
     else
         : > mosdepth/${bam_f.baseName}.callable.bed
         printf '0.000' > mosdepth/${bam_f.baseName}.callable_mb.txt

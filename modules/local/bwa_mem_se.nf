@@ -23,7 +23,7 @@ process BWA_MEM_SE {
       > bwamem/${meta}.${genome_f.baseName}.bam
     cmd_status=\$?
 
-    if [ "$cmd_status" -ne 0 ]; then
+    if [ "\$cmd_status" -ne 0 ]; then
         rm -f bwamem/${meta}.${genome_f.baseName}.bam
         printf '%s\talignment\tfailed\tbwa_mem_failed\n' '${meta}' > ${meta}.alignment_status.tsv
         exit 0
@@ -36,12 +36,12 @@ process BWA_MEM_SE {
     fi
 
     READ_COUNT="\$(samtools view -c bwamem/${meta}.${genome_f.baseName}.bam)"
-    if [ "$READ_COUNT" -eq 0 ]; then
+    if [ "\$READ_COUNT" -eq 0 ]; then
         rm -f bwamem/${meta}.${genome_f.baseName}.bam
         printf '%s\talignment\tfailed\tempty_bam\n' '${meta}' > ${meta}.alignment_status.tsv
         exit 0
     fi
 
-    printf '%s\talignment\tok\treads=%s\n' '${meta}' "$READ_COUNT" > ${meta}.alignment_status.tsv
+    printf '%s\talignment\tok\treads=%s\n' '${meta}' "\$READ_COUNT" > ${meta}.alignment_status.tsv
     """
 }

@@ -18,13 +18,13 @@ process VALIDATE_ALIGNMENT {
     fi
 
     READ_COUNT="\$(samtools view -c ${alignment_f})"
-    if [ "$READ_COUNT" -eq 0 ]; then
+    if [ "\$READ_COUNT" -eq 0 ]; then
         printf '%s\tprepared_alignment\tfailed\tempty_alignment\n' '${meta}' > ${meta}.prepared_alignment_status.tsv
         exit 0
     fi
 
     ln -s ${alignment_f} ${alignment_f.name}
     ln -s ${index_f} ${index_f.name}
-    printf '%s\tprepared_alignment\tok\treads=%s\n' '${meta}' "$READ_COUNT" > ${meta}.prepared_alignment_status.tsv
+    printf '%s\tprepared_alignment\tok\treads=%s\n' '${meta}' "\$READ_COUNT" > ${meta}.prepared_alignment_status.tsv
     """
 }

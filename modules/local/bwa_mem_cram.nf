@@ -22,7 +22,7 @@ process BWA_MEM_CRAM {
       | samtools sort -@ ${task.cpus} -n -T ${meta}.name_sort -O bam -o ${meta}.name_sorted.bam -
     cmd_status=\$?
 
-    if [ "$cmd_status" -ne 0 ]; then
+    if [ "\$cmd_status" -ne 0 ]; then
         rm -f ${meta}.name_sorted.bam
         printf '%s\talignment\tfailed\tbwa_mem_failed\n' '${meta}' > ${meta}.alignment_status.tsv
         exit 0
@@ -35,12 +35,12 @@ process BWA_MEM_CRAM {
     fi
 
     READ_COUNT="\$(samtools view -c ${meta}.name_sorted.bam)"
-    if [ "$READ_COUNT" -eq 0 ]; then
+    if [ "\$READ_COUNT" -eq 0 ]; then
         rm -f ${meta}.name_sorted.bam
         printf '%s\talignment\tfailed\tempty_name_sorted_bam\n' '${meta}' > ${meta}.alignment_status.tsv
         exit 0
     fi
 
-    printf '%s\talignment\tok\treads=%s\n' '${meta}' "$READ_COUNT" > ${meta}.alignment_status.tsv
+    printf '%s\talignment\tok\treads=%s\n' '${meta}' "\$READ_COUNT" > ${meta}.alignment_status.tsv
     """
 }

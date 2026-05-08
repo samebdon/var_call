@@ -19,6 +19,8 @@ include { VIEW_TO_CRAM_SAMTOOLS } from '../modules/local/view_to_cram_samtools'
 include { INDEX_CRAM_SAMTOOLS } from '../modules/local/index_cram_samtools'
 include { SORT_BAM_SAMBAMBA } from '../modules/local/sort_bam_sambamba'
 include { MARK_DUPES_SAMBAMBA } from '../modules/local/mark_dupes_sambamba'
+include { VALIDATE_ALIGNMENT } from '../modules/local/validate_alignment'
+include { MERGE_SAMPLE_STATUS } from '../modules/local/merge_sample_status'
 include { FREEBAYES_PARALLEL } from '../modules/local/freebayes'
 
 workflow VAR_CALL_PAIRED {
@@ -51,24 +53,35 @@ workflow VAR_CALL_PAIRED {
 
     if (alignment_format == 'cram') {
         BWA_MEM_CRAM(genome, PREPARE_ALIGNMENT_REFERENCE.out.bwa_index, trimmed_reads)
-        FIXMATE_SAMTOOLS(BWA_MEM_CRAM.out)
+        alignment_status = BWA_MEM_CRAM.out.status
+        FIXMATE_SAMTOOLS(BWA_MEM_CRAM.out.alignment)
         SORT_COORD_SAMTOOLS(FIXMATE_SAMTOOLS.out)
         MARK_DUPES_SAMTOOLS(SORT_COORD_SAMTOOLS.out)
         VIEW_TO_CRAM_SAMTOOLS(genome, MARK_DUPES_SAMTOOLS.out)
         INDEX_CRAM_SAMTOOLS(VIEW_TO_CRAM_SAMTOOLS.out)
-        prepared_alignments = VIEW_TO_CRAM_SAMTOOLS.out.join(INDEX_CRAM_SAMTOOLS.out)
-            .map { meta, cram_f, crai_f -> [meta, cram_f, crai_f] }
+        prepared_alignments = VIEW_TO_CRAM_SAMTOOLS.out.join(INDEX_CRAM_SAMTOOLS.out).map { meta, cram_f, crai_f -> [meta, cram_f, crai_f] }
     } else {
         BWA_MEM(genome, PREPARE_ALIGNMENT_REFERENCE.out.bwa_index, trimmed_reads)
-        SORT_BAM_SAMBAMBA(BWA_MEM.out)
+        alignment_status = BWA_MEM.out.status
+        SORT_BAM_SAMBAMBA(BWA_MEM.out.alignment)
         MARK_DUPES_SAMBAMBA(SORT_BAM_SAMBAMBA.out)
         prepared_alignments = MARK_DUPES_SAMBAMBA.out.bam
     }
 
-    CALLABLE_REGIONS(prepared_alignments, params.min_depth, PREPARE_ALIGNMENT_REFERENCE.out.fasta_index, dataset_id)
+    VALIDATE_ALIGNMENT(prepared_alignments)
+    valid_alignments = VALIDATE_ALIGNMENT.out.valid_alignment
+    valid_alignments.ifEmpty { error "No valid alignments available after alignment/preparation checks" }
 
-    bam_list = prepared_alignments.map { meta, alignment, alignment_index -> alignment }.collect()
-    staged_bams = prepared_alignments.map { meta, alignment, alignment_index -> [alignment, alignment_index] }.collect()
+    CALLABLE_REGIONS(valid_alignments, params.min_depth, PREPARE_ALIGNMENT_REFERENCE.out.fasta_index, dataset_id)
+
+    status_files = alignment_status.map { meta, status -> status }
+        .mix(VALIDATE_ALIGNMENT.out.status.map { meta, status -> status })
+        .mix(CALLABLE_REGIONS.out.callable_status.map { meta, status -> status })
+        .collect()
+    MERGE_SAMPLE_STATUS(status_files, dataset_id)
+
+    bam_list = valid_alignments.map { meta, alignment, alignment_index -> alignment }.collect()
+    staged_bams = valid_alignments.map { meta, alignment, alignment_index -> [alignment, alignment_index] }.collect()
 
     FREEBAYES_PARALLEL(genome, PREPARE_ALIGNMENT_REFERENCE.out.fasta_index, bam_list, dataset_id, staged_bams)
     FILTER_VARIANTS(genome, FREEBAYES_PARALLEL.out, CALLABLE_REGIONS.out.multi_callable_bed, CALLABLE_REGIONS.out.depth_thresholds, PREPARE_ALIGNMENT_REFERENCE.out.fasta_index, repeat_bed)
@@ -109,18 +122,25 @@ workflow VAR_CALL_ALIGNMENTS {
         MARK_DUPES_SAMTOOLS(SORT_COORD_SAMTOOLS.out)
         VIEW_TO_CRAM_SAMTOOLS(genome, MARK_DUPES_SAMTOOLS.out)
         INDEX_CRAM_SAMTOOLS(VIEW_TO_CRAM_SAMTOOLS.out)
-        prepared_crams = VIEW_TO_CRAM_SAMTOOLS.out.join(INDEX_CRAM_SAMTOOLS.out)
-            .map { meta, cram_f, crai_f -> [meta, cram_f, crai_f] }
+        prepared_crams = VIEW_TO_CRAM_SAMTOOLS.out.join(INDEX_CRAM_SAMTOOLS.out).map { meta, cram_f, crai_f -> [meta, cram_f, crai_f] }
     } else {
         prepared_crams = Channel.empty()
     }
 
     prepared_alignments = prepared_bams.mix(prepared_crams)
+    VALIDATE_ALIGNMENT(prepared_alignments)
+    valid_alignments = VALIDATE_ALIGNMENT.out.valid_alignment
+    valid_alignments.ifEmpty { error "No valid alignments available after preparation checks" }
 
-    CALLABLE_REGIONS(prepared_alignments, params.min_depth, PREPARE_REFERENCE.out.fasta_index, dataset_id)
+    CALLABLE_REGIONS(valid_alignments, params.min_depth, PREPARE_REFERENCE.out.fasta_index, dataset_id)
 
-    bam_list = prepared_alignments.map { meta, alignment, alignment_index -> alignment }.collect()
-    staged_bams = prepared_alignments.map { meta, alignment, alignment_index -> [alignment, alignment_index] }.collect()
+    status_files = VALIDATE_ALIGNMENT.out.status.map { meta, status -> status }
+        .mix(CALLABLE_REGIONS.out.callable_status.map { meta, status -> status })
+        .collect()
+    MERGE_SAMPLE_STATUS(status_files, dataset_id)
+
+    bam_list = valid_alignments.map { meta, alignment, alignment_index -> alignment }.collect()
+    staged_bams = valid_alignments.map { meta, alignment, alignment_index -> [alignment, alignment_index] }.collect()
 
     FREEBAYES_PARALLEL(genome, PREPARE_REFERENCE.out.fasta_index, bam_list, dataset_id, staged_bams)
     FILTER_VARIANTS(genome, FREEBAYES_PARALLEL.out, CALLABLE_REGIONS.out.multi_callable_bed, CALLABLE_REGIONS.out.depth_thresholds, PREPARE_REFERENCE.out.fasta_index, repeat_bed)
@@ -148,24 +168,35 @@ workflow VAR_CALL_SINGLE_END {
 
     if (alignment_format == 'cram') {
         BWA_MEM_SE_CRAM(genome, PREPARE_ALIGNMENT_REFERENCE.out.bwa_index, input_reads)
-        FIXMATE_SAMTOOLS(BWA_MEM_SE_CRAM.out)
+        alignment_status = BWA_MEM_SE_CRAM.out.status
+        FIXMATE_SAMTOOLS(BWA_MEM_SE_CRAM.out.alignment)
         SORT_COORD_SAMTOOLS(FIXMATE_SAMTOOLS.out)
         MARK_DUPES_SAMTOOLS(SORT_COORD_SAMTOOLS.out)
         VIEW_TO_CRAM_SAMTOOLS(genome, MARK_DUPES_SAMTOOLS.out)
         INDEX_CRAM_SAMTOOLS(VIEW_TO_CRAM_SAMTOOLS.out)
-        prepared_alignments = VIEW_TO_CRAM_SAMTOOLS.out.join(INDEX_CRAM_SAMTOOLS.out)
-            .map { meta, cram_f, crai_f -> [meta, cram_f, crai_f] }
+        prepared_alignments = VIEW_TO_CRAM_SAMTOOLS.out.join(INDEX_CRAM_SAMTOOLS.out).map { meta, cram_f, crai_f -> [meta, cram_f, crai_f] }
     } else {
         BWA_MEM_SE(genome, PREPARE_ALIGNMENT_REFERENCE.out.bwa_index, input_reads)
-        SORT_BAM_SAMBAMBA(BWA_MEM_SE.out)
+        alignment_status = BWA_MEM_SE.out.status
+        SORT_BAM_SAMBAMBA(BWA_MEM_SE.out.alignment)
         MARK_DUPES_SAMBAMBA(SORT_BAM_SAMBAMBA.out)
         prepared_alignments = MARK_DUPES_SAMBAMBA.out.bam
     }
 
-    CALLABLE_REGIONS(prepared_alignments, params.min_depth, PREPARE_ALIGNMENT_REFERENCE.out.fasta_index, dataset_id)
+    VALIDATE_ALIGNMENT(prepared_alignments)
+    valid_alignments = VALIDATE_ALIGNMENT.out.valid_alignment
+    valid_alignments.ifEmpty { error "No valid alignments available after alignment/preparation checks" }
 
-    bam_list = prepared_alignments.map { meta, alignment, alignment_index -> alignment }.collect()
-    staged_bams = prepared_alignments.map { meta, alignment, alignment_index -> [alignment, alignment_index] }.collect()
+    CALLABLE_REGIONS(valid_alignments, params.min_depth, PREPARE_ALIGNMENT_REFERENCE.out.fasta_index, dataset_id)
+
+    status_files = alignment_status.map { meta, status -> status }
+        .mix(VALIDATE_ALIGNMENT.out.status.map { meta, status -> status })
+        .mix(CALLABLE_REGIONS.out.callable_status.map { meta, status -> status })
+        .collect()
+    MERGE_SAMPLE_STATUS(status_files, dataset_id)
+
+    bam_list = valid_alignments.map { meta, alignment, alignment_index -> alignment }.collect()
+    staged_bams = valid_alignments.map { meta, alignment, alignment_index -> [alignment, alignment_index] }.collect()
 
     FREEBAYES_PARALLEL(genome, PREPARE_ALIGNMENT_REFERENCE.out.fasta_index, bam_list, dataset_id, staged_bams)
     FILTER_VARIANTS(genome, FREEBAYES_PARALLEL.out, CALLABLE_REGIONS.out.multi_callable_bed, CALLABLE_REGIONS.out.depth_thresholds, PREPARE_ALIGNMENT_REFERENCE.out.fasta_index, repeat_bed)

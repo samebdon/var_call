@@ -1,8 +1,5 @@
 process BWA_MEM_SE {
     tag "$meta"
-    label 'align_reads'
-
-    memory '8 GB'
 
     input:
     path(genome_f)
@@ -10,18 +7,41 @@ process BWA_MEM_SE {
     tuple val(meta), path(reads)
 
     output:
-    tuple val(meta), path("bwamem/${meta}.${genome_f.baseName}.bam")
+    tuple val(meta), path("bwamem/${meta}.${genome_f.baseName}.bam"), emit: alignment, optional: true
+    tuple val(meta), path("${meta}.alignment_status.tsv"), emit: status
 
     script:
     """
-    set -euo pipefail
+    set -uo pipefail
     mkdir -p bwamem
     bwa mem \
         -t ${task.cpus} \
-        -R "@RG\tID:${meta}\tSM:${meta}\tPL:ILLUMINA\tPU:${meta}\tLB:${meta}\tDS:${meta}" \
+        -R "@RG\\tID:${meta}\\tSM:${meta}\\tPL:ILLUMINA\\tPU:${meta}\\tLB:${meta}\\tDS:${meta}" \
         ${genome_f} \
         ${reads} \
       | sambamba view -t ${task.cpus} -S -f bam /dev/stdin \
       > bwamem/${meta}.${genome_f.baseName}.bam
+    cmd_status=\$?
+
+    if [ "$cmd_status" -ne 0 ]; then
+        rm -f bwamem/${meta}.${genome_f.baseName}.bam
+        printf '%s\talignment\tfailed\tbwa_mem_failed\n' '${meta}' > ${meta}.alignment_status.tsv
+        exit 0
+    fi
+
+    if ! samtools quickcheck bwamem/${meta}.${genome_f.baseName}.bam 2>/dev/null; then
+        rm -f bwamem/${meta}.${genome_f.baseName}.bam
+        printf '%s\talignment\tfailed\tinvalid_bam\n' '${meta}' > ${meta}.alignment_status.tsv
+        exit 0
+    fi
+
+    READ_COUNT="\$(samtools view -c bwamem/${meta}.${genome_f.baseName}.bam)"
+    if [ "$READ_COUNT" -eq 0 ]; then
+        rm -f bwamem/${meta}.${genome_f.baseName}.bam
+        printf '%s\talignment\tfailed\tempty_bam\n' '${meta}' > ${meta}.alignment_status.tsv
+        exit 0
+    fi
+
+    printf '%s\talignment\tok\treads=%s\n' '${meta}' "$READ_COUNT" > ${meta}.alignment_status.tsv
     """
 }

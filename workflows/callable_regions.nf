@@ -30,4 +30,5 @@ workflow CALLABLE_REGIONS {
     joint_callable_bed = MULTIINTER_CALLABLE.out.joint_callable
     depth_thresholds = depth_thresholds
     callable_size_mb = MOSDEPTH_CALLABLE.out.callable_size_mb
+    callable_status = MOSDEPTH_CALLABLE.out.callable_status
 }

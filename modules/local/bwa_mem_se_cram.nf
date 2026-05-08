@@ -1,8 +1,5 @@
 process BWA_MEM_SE_CRAM {
     tag "$meta"
-    label 'align_reads'
-
-    memory '8 GB'
 
     input:
     path(genome_f)
@@ -10,16 +7,39 @@ process BWA_MEM_SE_CRAM {
     tuple val(meta), path(reads)
 
     output:
-    tuple val(meta), path("${meta}.name_sorted.bam")
+    tuple val(meta), path("${meta}.name_sorted.bam"), emit: alignment, optional: true
+    tuple val(meta), path("${meta}.alignment_status.tsv"), emit: status
 
     script:
     """
-    set -euo pipefail
+    set -uo pipefail
     bwa mem \
         -t ${task.cpus} \
-        -R "@RG\tID:${meta}\tSM:${meta}\tPL:ILLUMINA\tPU:${meta}\tLB:${meta}\tDS:${meta}" \
+        -R "@RG\\tID:${meta}\\tSM:${meta}\\tPL:ILLUMINA\\tPU:${meta}\\tLB:${meta}\\tDS:${meta}" \
         ${genome_f} \
         ${reads} \
       | samtools sort -@ ${task.cpus} -n -T ${meta}.name_sort -O bam -o ${meta}.name_sorted.bam -
+    cmd_status=\$?
+
+    if [ "$cmd_status" -ne 0 ]; then
+        rm -f ${meta}.name_sorted.bam
+        printf '%s\talignment\tfailed\tbwa_mem_failed\n' '${meta}' > ${meta}.alignment_status.tsv
+        exit 0
+    fi
+
+    if ! samtools quickcheck ${meta}.name_sorted.bam 2>/dev/null; then
+        rm -f ${meta}.name_sorted.bam
+        printf '%s\talignment\tfailed\tinvalid_name_sorted_bam\n' '${meta}' > ${meta}.alignment_status.tsv
+        exit 0
+    fi
+
+    READ_COUNT="\$(samtools view -c ${meta}.name_sorted.bam)"
+    if [ "$READ_COUNT" -eq 0 ]; then
+        rm -f ${meta}.name_sorted.bam
+        printf '%s\talignment\tfailed\tempty_name_sorted_bam\n' '${meta}' > ${meta}.alignment_status.tsv
+        exit 0
+    fi
+
+    printf '%s\talignment\tok\treads=%s\n' '${meta}' "$READ_COUNT" > ${meta}.alignment_status.tsv
     """
 }

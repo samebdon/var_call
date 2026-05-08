@@ -1,6 +1,5 @@
 process ADD_RGS_SAMTOOLS {
     tag "$meta"
-    publishDir "${params.outdir}/crams", mode: 'copy'
 
     input:
     tuple val(meta), path(alignment_f)

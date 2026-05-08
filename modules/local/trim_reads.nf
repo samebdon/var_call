@@ -1,6 +1,5 @@
 process TRIM_READS {
     tag "$meta"
-    publishDir "${params.outdir}/fastq", mode: 'copy'
 
     cpus 4
     memory '4 GB'

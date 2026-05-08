@@ -1,6 +1,5 @@
 process SORT_BAM_SAMBAMBA {
     tag "$meta"
-    publishDir "${params.outdir}/bams", mode: 'copy'
 
     memory '8 GB'
 

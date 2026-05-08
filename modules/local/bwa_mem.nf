@@ -14,17 +14,14 @@ process BWA_MEM {
     """
     set -uo pipefail
     mkdir -p bwamem
-    bwa mem \
+    if ! bwa mem \
         -t ${task.cpus} \
         -R "@RG\\tID:${meta}\\tSM:${meta}\\tPL:ILLUMINA\\tPU:${meta}\\tLB:${meta}\\tDS:${meta}" \
         ${genome_f} \
         ${read1} \
         ${read2} \
       | sambamba view -t ${task.cpus} -S -f bam /dev/stdin \
-      > bwamem/${meta}.${genome_f.baseName}.bam
-    cmd_status=\$?
-
-    if [ "\$cmd_status" -ne 0 ]; then
+      > bwamem/${meta}.${genome_f.baseName}.bam; then
         rm -f bwamem/${meta}.${genome_f.baseName}.bam
         printf '%s\talignment\tfailed\tbwa_mem_failed\n' '${meta}' > ${meta}.alignment_status.tsv
         exit 0

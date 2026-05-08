@@ -1,6 +1,5 @@
 process READS_CRAM_TO_FASTQ_PAIRED {
     tag "$meta"
-    publishDir "${params.outdir}/fastq", mode: 'copy'
 
     input:
     tuple val(meta), path(cram_f)

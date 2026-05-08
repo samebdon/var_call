@@ -13,15 +13,12 @@ process BWA_MEM_SE_CRAM {
     script:
     """
     set -uo pipefail
-    bwa mem \
+    if ! bwa mem \
         -t ${task.cpus} \
         -R "@RG\\tID:${meta}\\tSM:${meta}\\tPL:ILLUMINA\\tPU:${meta}\\tLB:${meta}\\tDS:${meta}" \
         ${genome_f} \
         ${reads} \
-      | samtools sort -@ ${task.cpus} -n -T ${meta}.name_sort -O bam -o ${meta}.name_sorted.bam -
-    cmd_status=\$?
-
-    if [ "\$cmd_status" -ne 0 ]; then
+      | samtools sort -@ ${task.cpus} -n -T ${meta}.name_sort -O bam -o ${meta}.name_sorted.bam -; then
         rm -f ${meta}.name_sorted.bam
         printf '%s\talignment\tfailed\tbwa_mem_failed\n' '${meta}' > ${meta}.alignment_status.tsv
         exit 0

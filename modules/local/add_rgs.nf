@@ -1,6 +1,5 @@
 process ADD_RGS {
     tag "$meta"
-    publishDir "${params.outdir}/bams", mode: 'copy'
 
     input:
     tuple val(meta), path(bam)

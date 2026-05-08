@@ -1,6 +1,6 @@
 # var_call
 
-Freebayes variant-calling pipeline using paired-end reads, single-end reads, or alignments (BAM/CRAM).
+Freebayes variant-calling pipeline using paired-end reads (FASTQ/CRAM), single-end reads, or alignments (BAM/CRAM).
 
 ## Usage
 
@@ -79,6 +79,3 @@ Please also cite Nextflow and major underlying tools such as Freebayes where app
 ## Notes
 
 See [docs/output.md](/Users/se13/workspace/projects/pipelines/var_call/docs/output.md) for more detail.
-
-
-Raw read CRAMs are now supported in read-based modes with `--read_format cram`. In paired mode these are converted to mate FASTQs with `samtools collate | samtools fastq` before optional trimming and alignment, independently of whether the mapped output format is BAM or CRAM.

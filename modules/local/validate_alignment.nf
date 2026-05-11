@@ -23,8 +23,6 @@ process VALIDATE_ALIGNMENT {
         exit 0
     fi
 
-    ln -s ${alignment_f} ${alignment_f.name}
-    ln -s ${index_f} ${index_f.name}
     printf '%s\tprepared_alignment\tok\treads=%s\n' '${meta}' "\$READ_COUNT" > ${meta}.prepared_alignment_status.tsv
     """
 }

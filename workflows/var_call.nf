@@ -72,7 +72,7 @@ workflow VAR_CALL_PAIRED {
     valid_alignments = VALIDATE_ALIGNMENT.out.valid_alignment
     valid_alignments.ifEmpty { error "No valid alignments available after alignment/preparation checks" }
 
-    CALLABLE_REGIONS(valid_alignments, params.min_depth, PREPARE_ALIGNMENT_REFERENCE.out.fasta_index, dataset_id)
+    CALLABLE_REGIONS(genome, valid_alignments, params.min_depth, PREPARE_ALIGNMENT_REFERENCE.out.fasta_index, dataset_id)
 
     status_files = alignment_status.map { meta, status -> status }
         .mix(VALIDATE_ALIGNMENT.out.status.map { meta, status -> status })
@@ -132,7 +132,7 @@ workflow VAR_CALL_ALIGNMENTS {
     valid_alignments = VALIDATE_ALIGNMENT.out.valid_alignment
     valid_alignments.ifEmpty { error "No valid alignments available after preparation checks" }
 
-    CALLABLE_REGIONS(valid_alignments, params.min_depth, PREPARE_REFERENCE.out.fasta_index, dataset_id)
+    CALLABLE_REGIONS(genome, valid_alignments, params.min_depth, PREPARE_REFERENCE.out.fasta_index, dataset_id)
 
     status_files = VALIDATE_ALIGNMENT.out.status.map { meta, status -> status }
         .mix(CALLABLE_REGIONS.out.callable_status.map { meta, status -> status })
@@ -187,7 +187,7 @@ workflow VAR_CALL_SINGLE_END {
     valid_alignments = VALIDATE_ALIGNMENT.out.valid_alignment
     valid_alignments.ifEmpty { error "No valid alignments available after alignment/preparation checks" }
 
-    CALLABLE_REGIONS(valid_alignments, params.min_depth, PREPARE_ALIGNMENT_REFERENCE.out.fasta_index, dataset_id)
+    CALLABLE_REGIONS(genome, valid_alignments, params.min_depth, PREPARE_ALIGNMENT_REFERENCE.out.fasta_index, dataset_id)
 
     status_files = alignment_status.map { meta, status -> status }
         .mix(VALIDATE_ALIGNMENT.out.status.map { meta, status -> status })

@@ -3,6 +3,7 @@ process MOSDEPTH_CALLABLE {
     publishDir "${params.outdir}/bed", mode: 'copy'
     
     input:
+    path(genome_f)
     tuple val(meta), path(bam_f), path(bam_index)
     val(min_depth)
 
@@ -17,7 +18,7 @@ process MOSDEPTH_CALLABLE {
     """
     set -euo pipefail
     mkdir -p mosdepth
-    mosdepth --fast-mode -t ${task.cpus} tmp ${bam_f}
+    mosdepth --fast-mode --fasta ${genome_f} -t ${task.cpus} tmp ${bam_f}
     MAX_DEPTH="\$(callable_upper_depth.py -b tmp.per-base.bed.gz)"
 
     mapfile -t SAMPLE_NAME_ARRAY < <(
@@ -37,7 +38,7 @@ process MOSDEPTH_CALLABLE {
         exit 1
     fi
 
-    mosdepth -t ${task.cpus} -n --quantize 0:1:${min_depth}:\${MAX_DEPTH}: ${meta} ${bam_f}
+    mosdepth --fasta ${genome_f} -t ${task.cpus} -n --quantize 0:1:${min_depth}:\${MAX_DEPTH}: ${meta} ${bam_f}
     CALLABLE_LABEL="${min_depth}:\$MAX_DEPTH"
     zcat ${meta}.quantized.bed.gz | awk -v label="\$CALLABLE_LABEL" '\$4==label {print}' > mosdepth/${bam_f.baseName}.callable.bed
     awk '{SUM += \$3-\$2} END {printf "%.3f", SUM/1000000}' mosdepth/${bam_f.baseName}.callable.bed > mosdepth/${bam_f.baseName}.callable_mb.txt

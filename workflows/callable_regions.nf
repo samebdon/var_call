@@ -3,13 +3,14 @@ include { MULTIINTER_CALLABLE } from '../modules/local/multiinter_callable'
 
 workflow CALLABLE_REGIONS {
     take:
+    genome
     deduped_bams
     min_depth
     genome_index
     dataset_id
 
     main:
-    MOSDEPTH_CALLABLE(deduped_bams, min_depth)
+    MOSDEPTH_CALLABLE(genome, deduped_bams, min_depth)
 
     callable_beds = MOSDEPTH_CALLABLE.out.callable_bed
         .map { meta, bed -> bed }

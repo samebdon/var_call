@@ -41,16 +41,16 @@ process MOSDEPTH_CALLABLE {
     mosdepth --fasta ${genome_f} -t ${task.cpus} -n --quantize 0:1:${min_depth}:\${MAX_DEPTH}: ${meta} ${bam_f}
     CALLABLE_LABEL="${min_depth}:\$MAX_DEPTH"
     zcat ${meta}.quantized.bed.gz | awk -v label="\$CALLABLE_LABEL" '\$4==label {print}' > mosdepth/${bam_f.baseName}.callable.bed
-    awk '{SUM += \$3-\$2} END {printf "%.3f", SUM/1000000}' mosdepth/${bam_f.baseName}.callable.bed > mosdepth/${bam_f.baseName}.callable_mb.txt
+    awk '{SUM += \$3-\$2} END {printf "%.3f\\n", SUM/1000000}' mosdepth/${bam_f.baseName}.callable.bed > mosdepth/${bam_f.baseName}.callable_mb.txt
     printf '%s\\n' "\$SAMPLE_NAME" > mosdepth/${bam_f.baseName}.sample_name.txt
     printf '%s\\t%s\\t%s\\n' "\$SAMPLE_NAME" "${min_depth}" "\$MAX_DEPTH" > mosdepth/${bam_f.baseName}.depth_thresholds.tsv
 
     if [ -s mosdepth/${bam_f.baseName}.callable.bed ]; then
-        read -r CALLABLE_MB < mosdepth/${bam_f.baseName}.callable_mb.txt
+        CALLABLE_MB="\$(tr -d '\\n' < mosdepth/${bam_f.baseName}.callable_mb.txt)"
         printf '%s\tcallable_sites\tok\tcallable_mb=%s\n' '${meta}' "\$CALLABLE_MB" > mosdepth/${bam_f.baseName}.callable_status.tsv
     else
         : > mosdepth/${bam_f.baseName}.callable.bed
-        printf '0.000' > mosdepth/${bam_f.baseName}.callable_mb.txt
+        printf '0.000\n' > mosdepth/${bam_f.baseName}.callable_mb.txt
         printf '%s\tcallable_sites\tfailed\tno_callable_sites\n' '${meta}' > mosdepth/${bam_f.baseName}.callable_status.tsv
     fi
     """

@@ -1,6 +1,5 @@
 process VALIDATE_ALIGNMENT {
     tag "$meta"
-    publishDir "${params.outdir}/qc", mode: 'copy'
 
     input:
     tuple val(meta), path(alignment_f), path(index_f)

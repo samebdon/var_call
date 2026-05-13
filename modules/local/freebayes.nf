@@ -1,5 +1,6 @@
 process FREEBAYES {
     tag "$meta"
+    label 'variant_calling'
 
     input:
     path(genome_f)
@@ -18,7 +19,7 @@ process FREEBAYES {
 
 process FREEBAYES_PARALLEL {
     tag "$species"
-    label 'freebayes_parallel'
+    label 'variant_calling'
 
     input:
     path(genome)

@@ -1,5 +1,6 @@
 process READS_CRAM_TO_FASTQ_PAIRED {
     tag "$meta"
+    label 'reads_prep'
 
     input:
     tuple val(meta), path(cram_f)

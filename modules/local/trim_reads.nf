@@ -1,8 +1,6 @@
 process TRIM_READS {
     tag "$meta"
-
-    cpus 4
-    memory '4 GB'
+    label 'reads_prep'
 
     input:
     tuple val(meta), path(read1), path(read2)

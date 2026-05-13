@@ -1,5 +1,6 @@
 process MOSDEPTH_CALLABLE {
     tag "$meta"
+    label 'callable_depth'
     publishDir "${params.outdir}/bed", mode: 'copy'
     
     input:

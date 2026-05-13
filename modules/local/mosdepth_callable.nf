@@ -14,6 +14,7 @@ process MOSDEPTH_CALLABLE {
     tuple val(meta), path("mosdepth/${bam_f.baseName}.sample_name.txt"), emit: sample_name
     tuple val(meta), path("mosdepth/${bam_f.baseName}.depth_thresholds.tsv"), emit: depth_thresholds
     tuple val(meta), path("mosdepth/${bam_f.baseName}.callable_status.tsv"), emit: callable_status
+    tuple val(meta), path("${meta}.mosdepth.global.dist.txt"), emit: global_dist
 
     script:
     """

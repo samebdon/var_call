@@ -53,7 +53,7 @@ dependencies:
   - mosdepth=0.3.8=hd299d5a_0
   - ncurses=6.5=h59595ed_0
   - numpy=2.0.0=py312h22e1c76_0
-  - matplotlib-base=3.9.1=py312h854627b_0
+  - matplotlib-base=3.10.0
   - openssl=3.4.0=hb9d3cd8_0
   - pandas=2.2.2=py312h1d6d2e6_1
   - parallel=20240722=ha770c72_0

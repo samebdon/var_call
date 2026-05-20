@@ -2,6 +2,17 @@ process MOSDEPTH_CALLABLE {
     tag "$meta"
     label 'callable_depth'
     publishDir "${params.outdir}/bed", mode: 'copy'
+    publishDir "${params.outdir}/qc", mode: 'copy', saveAs: { filename ->
+        if (
+            filename.endsWith('.mosdepth.global.dist.txt') ||
+            filename.endsWith('.callable_mb.txt') ||
+            filename.endsWith('.callable_status.tsv') ||
+            filename.endsWith('.depth_thresholds.tsv')
+        ) {
+            return filename
+        }
+        return null
+    }
     
     input:
     path(genome_f)

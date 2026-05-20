@@ -53,7 +53,7 @@ dependencies:
   - mosdepth=0.3.8=hd299d5a_0
   - ncurses=6.5=h59595ed_0
   - numpy=2.0.0=py312h22e1c76_0
-  - matplotlib-base=3.9.1=py312h854627b_0
+  - matplotlib-base=3.10.0
   - openssl=3.4.0=hb9d3cd8_0
   - pandas=2.2.2=py312h1d6d2e6_1
   - parallel=20240722=ha770c72_0
@@ -67,12 +67,12 @@ dependencies:
   - readline=8.2=h8228510_1
   - sambamba=1.0=h6f6fda4_1
   - samtools=1.20=h50ea8bc_1
-  - seaborn=0.13.2=hd8ed1ab_2
+  - seaborn=0.13.2
   - setuptools=71.0.4=pyhd8ed1ab_0
   - six=1.16.0=pyh6c4a22f_0
   - tabixpp=1.1.2=h27d5293_2
   - tk=8.6.13=noxft_h4845f30_101
-  - tqdm=4.66.4=pyhd8ed1ab_0
+  - tqdm=4.66.4
   - tzdata=2024a=h0c530f3_0
   - vcflib=1.0.3=h0033a41_4
   - wfa2-lib=2.3.5=h4ac6f70_0

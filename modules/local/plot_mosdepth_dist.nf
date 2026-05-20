@@ -15,7 +15,7 @@ process PLOT_MOSDEPTH_DIST {
     script:
     """
     set -euo pipefail
-    plot_mosdepth_dist.py \
+    python ${projectDir}/bin/plot_mosdepth_dist.py \
         --dir inputs \
         --prefix ${dataset_id}.mosdepth \
         --min ${min_cov} \

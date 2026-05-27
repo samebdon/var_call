@@ -5,8 +5,8 @@ type: software
 authors:
   - family-names: Ebdon
     given-names: Sam
-repository-code: "https://github.com/YOUR-USER/var_call"
-abstract: "Freebayes variant-calling pipeline for paired-end reads, single-end reads, or BAM inputs."
+repository-code: "https://github.com/samebdon/var_call"
+abstract: "Freebayes variant-calling pipeline for paired-end reads, single-end reads, or CRAM/BAM inputs."
 keywords:
   - nextflow
   - variant-calling

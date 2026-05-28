@@ -24,7 +24,7 @@ process BWA_MEM {
       > bwamem/${meta}.${genome_f.baseName}.bam; then
         rm -f bwamem/${meta}.${genome_f.baseName}.bam
         printf '%s\talignment\tfailed\tbwa_mem_failed\n' '${meta}' > ${meta}.alignment_status.tsv
-        exit 0
+        exit 1
     fi
 
     if ! samtools quickcheck bwamem/${meta}.${genome_f.baseName}.bam 2>/dev/null; then

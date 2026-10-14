@@ -8,7 +8,7 @@ dependencies:
   - _openmp_mutex=4.5=2_gnu
   - bcftools=1.20=h8b25389_1
   - bedtools=2.31.1=hf5e1c6e_2
-  - bwa=0.7.18=he4a0461_1
+  - minibwa=0.4
   - bzip2=1.0.8=h4bc722e_7
   - c-ares=1.32.2=h4bc722e_0
   - ca-certificates=2024.8.30=hbcca054_0

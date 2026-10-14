@@ -3,10 +3,10 @@ include { CALLABLE_REGIONS } from './callable_regions'
 include { FILTER_VARIANTS } from './filter_variants'
 
 include { TRIM_READS } from '../modules/local/trim_reads'
-include { BWA_MEM } from '../modules/local/bwa_mem'
-include { BWA_MEM_SE } from '../modules/local/bwa_mem_se'
-include { BWA_MEM_CRAM } from '../modules/local/bwa_mem_cram'
-include { BWA_MEM_SE_CRAM } from '../modules/local/bwa_mem_se_cram'
+include { MINIBWA_MAP } from '../modules/local/minibwa_map'
+include { MINIBWA_MAP_SE } from '../modules/local/minibwa_map_se'
+include { MINIBWA_MAP_CRAM } from '../modules/local/minibwa_map_cram'
+include { MINIBWA_MAP_SE_CRAM } from '../modules/local/minibwa_map_se_cram'
 include { READS_CRAM_TO_FASTQ_PAIRED } from '../modules/local/reads_cram_to_fastq_paired'
 include { READS_CRAM_TO_FASTQ_SINGLE } from '../modules/local/reads_cram_to_fastq_single'
 include { ADD_RGS } from '../modules/local/add_rgs'
@@ -52,18 +52,18 @@ workflow VAR_CALL_PAIRED {
     }
 
     if (alignment_format == 'cram') {
-        BWA_MEM_CRAM(genome, PREPARE_ALIGNMENT_REFERENCE.out.bwa_index, trimmed_reads)
-        alignment_status = BWA_MEM_CRAM.out.status
-        FIXMATE_SAMTOOLS(BWA_MEM_CRAM.out.alignment)
+        MINIBWA_MAP_CRAM(genome, PREPARE_ALIGNMENT_REFERENCE.out.minibwa_index, trimmed_reads)
+        alignment_status = MINIBWA_MAP_CRAM.out.status
+        FIXMATE_SAMTOOLS(MINIBWA_MAP_CRAM.out.alignment)
         SORT_COORD_SAMTOOLS(FIXMATE_SAMTOOLS.out)
         MARK_DUPES_SAMTOOLS(SORT_COORD_SAMTOOLS.out)
         VIEW_TO_CRAM_SAMTOOLS(genome, MARK_DUPES_SAMTOOLS.out)
         INDEX_CRAM_SAMTOOLS(VIEW_TO_CRAM_SAMTOOLS.out)
         prepared_alignments = VIEW_TO_CRAM_SAMTOOLS.out.join(INDEX_CRAM_SAMTOOLS.out).map { meta, cram_f, crai_f -> [meta, cram_f, crai_f] }
     } else {
-        BWA_MEM(genome, PREPARE_ALIGNMENT_REFERENCE.out.bwa_index, trimmed_reads)
-        alignment_status = BWA_MEM.out.status
-        SORT_BAM_SAMBAMBA(BWA_MEM.out.alignment)
+        MINIBWA_MAP(genome, PREPARE_ALIGNMENT_REFERENCE.out.minibwa_index, trimmed_reads)
+        alignment_status = MINIBWA_MAP.out.status
+        SORT_BAM_SAMBAMBA(MINIBWA_MAP.out.alignment)
         MARK_DUPES_SAMBAMBA(SORT_BAM_SAMBAMBA.out)
         prepared_alignments = MARK_DUPES_SAMBAMBA.out.bam
     }
@@ -167,18 +167,18 @@ workflow VAR_CALL_SINGLE_END {
     }
 
     if (alignment_format == 'cram') {
-        BWA_MEM_SE_CRAM(genome, PREPARE_ALIGNMENT_REFERENCE.out.bwa_index, input_reads)
-        alignment_status = BWA_MEM_SE_CRAM.out.status
-        FIXMATE_SAMTOOLS(BWA_MEM_SE_CRAM.out.alignment)
+        MINIBWA_MAP_SE_CRAM(genome, PREPARE_ALIGNMENT_REFERENCE.out.minibwa_index, input_reads)
+        alignment_status = MINIBWA_MAP_SE_CRAM.out.status
+        FIXMATE_SAMTOOLS(MINIBWA_MAP_SE_CRAM.out.alignment)
         SORT_COORD_SAMTOOLS(FIXMATE_SAMTOOLS.out)
         MARK_DUPES_SAMTOOLS(SORT_COORD_SAMTOOLS.out)
         VIEW_TO_CRAM_SAMTOOLS(genome, MARK_DUPES_SAMTOOLS.out)
         INDEX_CRAM_SAMTOOLS(VIEW_TO_CRAM_SAMTOOLS.out)
         prepared_alignments = VIEW_TO_CRAM_SAMTOOLS.out.join(INDEX_CRAM_SAMTOOLS.out).map { meta, cram_f, crai_f -> [meta, cram_f, crai_f] }
     } else {
-        BWA_MEM_SE(genome, PREPARE_ALIGNMENT_REFERENCE.out.bwa_index, input_reads)
-        alignment_status = BWA_MEM_SE.out.status
-        SORT_BAM_SAMBAMBA(BWA_MEM_SE.out.alignment)
+        MINIBWA_MAP_SE(genome, PREPARE_ALIGNMENT_REFERENCE.out.minibwa_index, input_reads)
+        alignment_status = MINIBWA_MAP_SE.out.status
+        SORT_BAM_SAMBAMBA(MINIBWA_MAP_SE.out.alignment)
         MARK_DUPES_SAMBAMBA(SORT_BAM_SAMBAMBA.out)
         prepared_alignments = MARK_DUPES_SAMBAMBA.out.bam
     }

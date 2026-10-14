@@ -1,4 +1,4 @@
-process BWA_MEM_CRAM {
+process MINIBWA_MAP_CRAM {
     tag "$meta"
 
     input:
@@ -15,8 +15,9 @@ process BWA_MEM_CRAM {
     """
     set -uo pipefail
     mkdir -p ${meta}.sort_tmp
-    if ! bwa mem \
+    if ! minibwa map \
         -t ${task.cpus} \
+        -b MD \
         -R "@RG\\tID:${meta}\\tSM:${meta}\\tPL:ILLUMINA\\tPU:${meta}\\tLB:${meta}\\tDS:${meta}" \
         ${genome_f} \
         ${read1} \
@@ -24,7 +25,7 @@ process BWA_MEM_CRAM {
       | samtools sort -@ ${task.cpus} -m ${sort_mem_mb}M -n -T ${meta}.sort_tmp/${meta}.name_sort -O bam -o ${meta}.name_sorted.bam -; then
         rm -f ${meta}.name_sorted.bam
         rm -rf ${meta}.sort_tmp
-        printf '%s\talignment\tfailed\tbwa_mem_failed\n' '${meta}' > ${meta}.alignment_status.tsv
+        printf '%s\talignment\tfailed\tminibwa_map_failed\n' '${meta}' > ${meta}.alignment_status.tsv
         exit 1
     fi
 

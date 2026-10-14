@@ -1,6 +1,6 @@
 # var_call
 
-Freebayes variant-calling pipeline using paired-end reads (FASTQ/CRAM), single-end reads, or alignments (BAM/CRAM).
+Freebayes variant-calling pipeline with minibwa read alignment, using paired-end reads (FASTQ/CRAM), single-end reads, or alignments (BAM/CRAM).
 
 ## Usage
 
@@ -53,6 +53,16 @@ nextflow run main.nf   -profile apptainer,lsf   -params-file params/afusca_param
 - Use `--input` with [assets/bam_samplesheet.csv](/Users/se13/workspace/projects/pipelines/var_call/assets/bam_samplesheet.csv) for BAM mode.
 - `--reads` or '--alignments' can be pointed to directly instead of using an input table.
 - `--repeat_bed` is optional. If omitted, callable regions are generated without repeat subtraction.
+
+## Read alignment
+
+Read-based modes use `minibwa map` for paired and single reads, including reads extracted from CRAM. Read groups and MD tags are retained, and BAM/CRAM output processing is unchanged. Existing alignment inputs bypass mapping.
+
+The environment pins minibwa 0.4. Reference preparation builds `.l2b` and `.mbw` indexes; BWA indexes cannot be reused. Indexing defaults to 4 CPUs and 64 GB RAM (roughly 18 bytes per reference base). Adjust `MINIBWA_INDEX` resources in your Nextflow configuration for larger references.
+
+Rebuild the Apptainer image or update an existing Conda environment before running this version. With the bundled YAML, Nextflow creates a new environment. Existing images and environments containing only BWA will no longer work.
+
+Minibwa uses a different algorithm, so alignments and downstream variant calls can change. Compare a representative dataset before adopting the updated results. Use a reference without alternate haplotype contigs; minibwa does not support those, noisy long reads, or spliced RNA alignment. See the [upstream guide](https://github.com/lh3/minibwa#users-guide).
 
 ## Software distribution
 

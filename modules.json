@@ -7,9 +7,9 @@
     "modules/local/bcftools_index.nf",
     "modules/local/bcftools_sort.nf",
     "modules/local/bedtools_subtract.nf",
-    "modules/local/bwa_index.nf",
-    "modules/local/bwa_mem.nf",
-    "modules/local/bwa_mem_se.nf",
+    "modules/local/minibwa_index.nf",
+    "modules/local/minibwa_map.nf",
+    "modules/local/minibwa_map_se.nf",
     "modules/local/freebayes.nf",
     "modules/local/generate_fail_bed.nf",
     "modules/local/generate_pass_vcf.nf",
@@ -23,6 +23,8 @@
     "modules/local/sambamba_merge.nf",
     "modules/local/samtools_faidx.nf",
     "modules/local/sort_bam_sambamba.nf",
-    "modules/local/trim_reads.nf"
+    "modules/local/trim_reads.nf",
+    "modules/local/minibwa_map_cram.nf",
+    "modules/local/minibwa_map_se_cram.nf"
   ]
 }

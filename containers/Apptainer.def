@@ -33,7 +33,7 @@ EOM
 
 %test
     set -e
-    bwa 2>&1 | head -n 1
+    minibwa version
     samtools --version | head -n 1
     bcftools --version | head -n 1
     freebayes --version

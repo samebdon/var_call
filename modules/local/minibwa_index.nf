@@ -1,14 +1,14 @@
-process BWA_INDEX {
+process MINIBWA_INDEX {
     tag "$genome_f.baseName"
 
     input:
     path(genome_f)
 
     output:
-    path("${genome_f}.*")
+    path("${genome_f}.{l2b,mbw}")
 
     script:
     """
-    bwa index ${genome_f}
+    minibwa index -t ${task.cpus} ${genome_f}
     """
 }

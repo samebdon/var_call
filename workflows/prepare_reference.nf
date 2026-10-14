@@ -1,4 +1,4 @@
-include { BWA_INDEX } from '../modules/local/bwa_index'
+include { MINIBWA_INDEX } from '../modules/local/minibwa_index'
 include { SAMTOOLS_FAIDX } from '../modules/local/samtools_faidx'
 
 workflow PREPARE_REFERENCE {
@@ -17,10 +17,10 @@ workflow PREPARE_ALIGNMENT_REFERENCE {
     genome
 
     main:
-    BWA_INDEX(genome)
+    MINIBWA_INDEX(genome)
     SAMTOOLS_FAIDX(genome)
 
     emit:
-    bwa_index = BWA_INDEX.out
+    minibwa_index = MINIBWA_INDEX.out
     fasta_index = SAMTOOLS_FAIDX.out
 }

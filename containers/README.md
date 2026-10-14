@@ -1,3 +1,5 @@
+Rebuild the image after the minibwa update; older images containing only BWA are incompatible.
+
 ## Build
 
 ```bash
